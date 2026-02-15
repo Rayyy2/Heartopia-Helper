@@ -1,0 +1,9 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="buddy/buddy.csproj" Id="4c8e08b8-adf5-49c2-a4d0-e182ffa9dcee">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+</Solution>
