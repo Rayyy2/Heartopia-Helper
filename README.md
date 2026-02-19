@@ -1,4 +1,4 @@
-Credits to kaikai2020 from uc forum and other member that shared codes on this thread. "https://www.unknowncheats.me/forum/other-games/736498-heartopia-buddy-teleport-auto-farm.html"
+Credits to kaikai2020 from uc forum and other members that shared codes on this thread. "https://www.unknowncheats.me/forum/other-games/736498-heartopia-buddy-teleport-auto-farm.html"
 
 ## ⚠️ Disclaimer
 
