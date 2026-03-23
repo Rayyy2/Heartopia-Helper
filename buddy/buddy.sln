@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11520.95 d18.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "buddy", "buddy.csproj", "{4C8E08B8-ADF5-49C2-A4D0-E182FFA9DCEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4C8E08B8-ADF5-49C2-A4D0-E182FFA9DCEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C8E08B8-ADF5-49C2-A4D0-E182FFA9DCEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C8E08B8-ADF5-49C2-A4D0-E182FFA9DCEE}.Debug|x64.ActiveCfg = Debug|x64
+		{4C8E08B8-ADF5-49C2-A4D0-E182FFA9DCEE}.Debug|x64.Build.0 = Debug|x64
+		{4C8E08B8-ADF5-49C2-A4D0-E182FFA9DCEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C8E08B8-ADF5-49C2-A4D0-E182FFA9DCEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C8E08B8-ADF5-49C2-A4D0-E182FFA9DCEE}.Release|x64.ActiveCfg = Release|x64
+		{4C8E08B8-ADF5-49C2-A4D0-E182FFA9DCEE}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B56857B-6E84-47BA-A502-10D2BBC2AC85}
+	EndGlobalSection
+EndGlobal
