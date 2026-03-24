@@ -85,6 +85,12 @@ namespace HeartopiaMod
             int num = startY;
             GUIStyle small = new GUIStyle(GUI.skin.label) { fontSize = 12 };
 
+            if (host.UI_DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "Equip Net"))
+            {
+                host.StartToolEquipRequest(2);
+            }
+            num += 45;
+
             string toggleText = insectFarmEnabled ? "DISABLE INSECT FARM" : "ENABLE INSECT FARM";
             if (host.UI_DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 40f), toggleText))
             {
