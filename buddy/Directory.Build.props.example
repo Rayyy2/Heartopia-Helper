@@ -1,0 +1,17 @@
+<Project>
+  <!--
+    SETUP INSTRUCTIONS:
+
+    1. If your game directory is not D:\SteamLibrary\steamapps\common\Heartopia then copy this file and rename it to "Directory.Build.props"
+
+    2. Update the HeartopiaDir path below to match your install location. It may look like this.
+    
+    <HeartopiaDir>C:\Program Files (x86)\Steam\steamapps\common</HeartopiaDir>
+
+    3. Once finished, this file is ignored by git and should NOT be committed. 
+  -->
+
+  <PropertyGroup>
+    <HeartopiaDir>C:\Path\To\Heartopia</HeartopiaDir>
+  </PropertyGroup>
+</Project>
