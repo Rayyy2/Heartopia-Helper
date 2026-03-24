@@ -3398,6 +3398,16 @@ namespace HeartopiaMod
                 if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), farmLabel))
                 {
                     this.autoFishFarm.ToggleFarm();
+                    if (this.autoFishFarm.farmEnabled)
+                    {
+                        this.showFishShadowRadar = true;
+                        this.isRadarActive = true;
+                        this.RunRadar();
+                    }
+                    else
+                    {
+                        this.showFishShadowRadar = false;
+                    }
                     // If started, set auto-stop timestamp if enabled
                     if (this.autoFishFarm.farmEnabled)
                     {
@@ -3477,6 +3487,16 @@ namespace HeartopiaMod
                 if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), fishLabel))
                 {
                     this.autoFishLogic.ToggleAutoFish();
+                    if (this.autoFishLogic.autoFishEnabled)
+                    {
+                        this.showFishShadowRadar = true;
+                        this.isRadarActive = true;
+                        this.RunRadar();
+                    }
+                    else
+                    {
+                        this.showFishShadowRadar = false;
+                    }
                 }
                 num += 45;
 
@@ -13619,7 +13639,7 @@ namespace HeartopiaMod
         public bool showInsectRadar = false;
 
         // Token: 0x0400002F RID: 47
-        private bool showFishShadowRadar = false;
+        public bool showFishShadowRadar = false;
         // Draw radar objects as a GUI overlay (like meteors) regardless of world distance
         private bool showRadarGuiOverlay = false;
         
