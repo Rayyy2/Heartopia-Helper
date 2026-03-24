@@ -75,9 +75,9 @@ namespace HeartopiaMod
         // Keybinds Management
         private KeyCode keyToggleMenu = KeyCode.Insert;
         private KeyCode keyToggleRadar = KeyCode.None;
-        private KeyCode keyAutoFarm = KeyCode.None;
+        private KeyCode keyAutoForaging = KeyCode.None;
         private KeyCode keyAutoFish = KeyCode.None;
-        private KeyCode keyAutoFishFarm = KeyCode.None;
+        private KeyCode keyAutoFishingTeleport = KeyCode.None;
         private KeyCode keyAutoCook = KeyCode.None;
         private KeyCode keyBypassUI = KeyCode.None;
         private KeyCode keyDisableAll = KeyCode.None;
@@ -92,6 +92,13 @@ namespace HeartopiaMod
         private KeyCode keyAntiAfk = KeyCode.None;
         private KeyCode keyBypassOverlap = KeyCode.None;
         private KeyCode keyBirdVacuum = KeyCode.None;
+        private KeyCode keyGameSpeed1x = KeyCode.None;
+        private KeyCode keyGameSpeed2x = KeyCode.None;
+        private KeyCode keyGameSpeed5x = KeyCode.None;
+        private KeyCode keyGameSpeed10x = KeyCode.None;
+        private KeyCode keyEquipAxe = KeyCode.None;
+        private KeyCode keyEquipNet = KeyCode.None;
+        private KeyCode keyEquipRod = KeyCode.None;
         
         // Key Rebinding State
         private string keyBindingActive = "";
@@ -240,7 +247,8 @@ namespace HeartopiaMod
         private string autoFishFarmAutoStopMinutesInput = "0";
         private string autoFishFarmAutoStopSecondsInput = "0";
         private float autoFishFarmAutoStopAt = -1f;
-        // Insect Farm moved to InsectFarm.cs
+        // Toggle for teleport fishing
+        private bool autoFishTeleportEnabled = false;
 
         public class CookingPatrolData
         {
@@ -257,9 +265,9 @@ namespace HeartopiaMod
         {
             public int keyToggleMenu;
             public int keyToggleRadar;
-            public int keyAutoFarm;
+            public int keyAutoForaging;
             public int keyAutoFish;
-            public int keyAutoFishFarm;
+            public int keyAutoFishingTeleport;
             public int keyAutoCook;
             public int keyBypassUI;
             public int keyDisableAll;
@@ -275,6 +283,13 @@ namespace HeartopiaMod
             public int keyBypassOverlap;
             public int keyBirdVacuum;
             public int keyAutoSnow;
+            public int keyGameSpeed1x;
+            public int keyGameSpeed2x;
+            public int keyGameSpeed5x;
+            public int keyGameSpeed10x;
+            public int keyEquipAxe;
+            public int keyEquipNet;
+            public int keyEquipRod;
             public float noclipSpeed;
             public float noclipBoostMultiplier;
             public float areaLoadDelay;
@@ -519,9 +534,9 @@ namespace HeartopiaMod
         {
             data.keyToggleMenu = (int)this.keyToggleMenu;
             data.keyToggleRadar = (int)this.keyToggleRadar;
-            data.keyAutoFarm = (int)this.keyAutoFarm;
+            data.keyAutoForaging = (int)this.keyAutoForaging;
             data.keyAutoFish = (int)this.keyAutoFish;
-            data.keyAutoFishFarm = (int)this.keyAutoFishFarm;
+            data.keyAutoFishingTeleport = (int)this.keyAutoFishingTeleport;
             data.keyAutoCook = (int)this.keyAutoCook;
             data.keyBypassUI = (int)this.keyBypassUI;
             data.keyDisableAll = (int)this.keyDisableAll;
@@ -537,6 +552,13 @@ namespace HeartopiaMod
             data.keyBypassOverlap = (int)this.keyBypassOverlap;
             data.keyBirdVacuum = (int)this.keyBirdVacuum;
             data.keyAutoSnow = (int)this.autoSnowHotkey;
+            data.keyGameSpeed1x = (int)this.keyGameSpeed1x;
+            data.keyGameSpeed2x = (int)this.keyGameSpeed2x;
+            data.keyGameSpeed5x = (int)this.keyGameSpeed5x;
+            data.keyGameSpeed10x = (int)this.keyGameSpeed10x;
+            data.keyEquipAxe = (int)this.keyEquipAxe;
+            data.keyEquipNet = (int)this.keyEquipNet;
+            data.keyEquipRod = (int)this.keyEquipRod;
             data.noclipSpeed = this.noclipSpeed;
             data.noclipBoostMultiplier = this.noclipBoostMultiplier;
             data.areaLoadDelay = this.areaLoadDelay;
@@ -578,9 +600,9 @@ namespace HeartopiaMod
             if (data == null) return;
             this.keyToggleMenu = (KeyCode)data.keyToggleMenu;
             this.keyToggleRadar = (KeyCode)data.keyToggleRadar;
-            this.keyAutoFarm = (KeyCode)data.keyAutoFarm;
+            this.keyAutoForaging = (KeyCode)data.keyAutoForaging;
             this.keyAutoFish = (KeyCode)data.keyAutoFish;
-            this.keyAutoFishFarm = (KeyCode)data.keyAutoFishFarm;
+            this.keyAutoFishingTeleport = (KeyCode)data.keyAutoFishingTeleport;
             this.keyAutoCook = (KeyCode)data.keyAutoCook;
             this.keyBypassUI = (KeyCode)data.keyBypassUI;
             this.keyDisableAll = (KeyCode)data.keyDisableAll;
@@ -596,6 +618,13 @@ namespace HeartopiaMod
             this.keyBypassOverlap = (KeyCode)data.keyBypassOverlap;
             this.keyBirdVacuum = (KeyCode)data.keyBirdVacuum;
             this.autoSnowHotkey = (KeyCode)data.keyAutoSnow;
+            this.keyGameSpeed1x = (KeyCode)data.keyGameSpeed1x;
+            this.keyGameSpeed2x = (KeyCode)data.keyGameSpeed2x;
+            this.keyGameSpeed5x = (KeyCode)data.keyGameSpeed5x;
+            this.keyGameSpeed10x = (KeyCode)data.keyGameSpeed10x;
+            this.keyEquipAxe = (KeyCode)data.keyEquipAxe;
+            this.keyEquipNet = (KeyCode)data.keyEquipNet;
+            this.keyEquipRod = (KeyCode)data.keyEquipRod;
             this.noclipSpeed = data.noclipSpeed;
             this.noclipBoostMultiplier = data.noclipBoostMultiplier;
             this.areaLoadDelay = data.areaLoadDelay;
@@ -788,8 +817,8 @@ namespace HeartopiaMod
                     {
                         if (line.Contains("keyToggleMenu")) this.keyToggleMenu = (KeyCode)GetJsonInt(line, "\"keyToggleMenu\":");
                         else if (line.Contains("keyToggleRadar")) this.keyToggleRadar = (KeyCode)GetJsonInt(line, "\"keyToggleRadar\":");
-                        else if (line.Contains("keyAutoFarm")) this.keyAutoFarm = (KeyCode)GetJsonInt(line, "\"keyAutoFarm\":");
-                        else if (line.Contains("keyAutoFishFarm")) this.keyAutoFishFarm = (KeyCode)GetJsonInt(line, "\"keyAutoFishFarm\":");
+                        else if (line.Contains("keyAutoFarm") || line.Contains("keyAutoForaging")) this.keyAutoForaging = (KeyCode)GetJsonInt(line, line.Contains("keyAutoFarm") ? "\"keyAutoFarm\":" : "\"keyAutoForaging\":");
+                        else if (line.Contains("keyAutoFishFarm") || line.Contains("keyAutoFishingTeleport")) this.keyAutoFishingTeleport = (KeyCode)GetJsonInt(line, line.Contains("keyAutoFishFarm") ? "\"keyAutoFishFarm\":" : "\"keyAutoFishingTeleport\":");
                         else if (line.Contains("keyAutoFish")) this.keyAutoFish = (KeyCode)GetJsonInt(line, "\"keyAutoFish\":");
                         else if (line.Contains("keyAutoCook")) this.keyAutoCook = (KeyCode)GetJsonInt(line, "\"keyAutoCook\":");
                         else if (line.Contains("keyBypassUI")) this.keyBypassUI = (KeyCode)GetJsonInt(line, "\"keyBypassUI\":");
@@ -1414,11 +1443,11 @@ namespace HeartopiaMod
                     this.ToggleRadar();
                     this.AddMenuNotification($"Radar {(this.isRadarActive ? "Enabled" : "Disabled")}", this.isRadarActive ? new Color(0.45f, 1f, 0.55f) : new Color(1f, 0.55f, 0.55f));
                 }
-                if (Input.GetKeyDown(this.keyAutoFarm))
+                if (Input.GetKeyDown(this.keyAutoForaging))
                 {
                     this.autoFarmEnabled = !this.autoFarmEnabled;
                     MelonLogger.Msg("Auto Collect " + (this.autoFarmEnabled ? "Enabled" : "Disabled"));
-                    this.AddMenuNotification($"Auto Farm {(this.autoFarmEnabled ? "Enabled" : "Disabled")}", this.autoFarmEnabled ? new Color(0.45f, 1f, 0.55f) : new Color(1f, 0.55f, 0.55f));
+                    this.AddMenuNotification($"Auto Foraging {(this.autoFarmEnabled ? "Enabled" : "Disabled")}", this.autoFarmEnabled ? new Color(0.45f, 1f, 0.55f) : new Color(1f, 0.55f, 0.55f));
                 }
                 if (Input.GetKeyDown(this.keyAutoFish))
                 {
@@ -1432,16 +1461,16 @@ namespace HeartopiaMod
                         this.AddMenuNotification("Auto Fish subsystem not initialized", new Color(1f, 0.55f, 0.55f));
                     }
                 }
-                if (Input.GetKeyDown(this.keyAutoFishFarm))
+                if (Input.GetKeyDown(this.keyAutoFishingTeleport))
                 {
                     if (this.autoFishFarm != null)
                     {
                         this.autoFishFarm.ToggleFarm();
-                        this.AddMenuNotification($"Fish Farm {(this.autoFishFarm.farmEnabled ? "Enabled" : "Disabled")}", this.autoFishFarm.farmEnabled ? new Color(0.45f, 1f, 0.55f) : new Color(1f, 0.55f, 0.55f));
+                        this.AddMenuNotification($"Auto Fishing (Teleport) {(this.autoFishFarm.farmEnabled ? "Enabled" : "Disabled")}", this.autoFishFarm.farmEnabled ? new Color(0.45f, 1f, 0.55f) : new Color(1f, 0.55f, 0.55f));
                     }
                     else
                     {
-                        this.AddMenuNotification("Fish Farm subsystem not initialized", new Color(1f, 0.55f, 0.55f));
+                        this.AddMenuNotification("Auto Fishing (Teleport) subsystem not initialized", new Color(1f, 0.55f, 0.55f));
                     }
                 }
                 if (Input.GetKeyDown(this.keyAutoCook))
@@ -1489,6 +1518,10 @@ namespace HeartopiaMod
                     this.noclipBoostMultiplier = 2f;
                     this.gameSpeed = 1f;
                     Time.timeScale = 1f;
+                    // Disable fishing features
+                    if (this.autoFishLogic != null) this.autoFishLogic.ToggleAutoFish();
+                    if (this.autoFishFarm != null) this.autoFishFarm.ToggleFarm();
+                    this.showFishShadowRadar = false;
                     MelonLogger.Msg("All features disabled and game speed reset");
                     this.AddMenuNotification("All features disabled", new Color(1f, 0.55f, 0.55f));
                 }
@@ -1594,6 +1627,45 @@ namespace HeartopiaMod
                         HeartopiaComplete.OverridePlayerPosition = false;
                         this.AddMenuNotification("Noclip: DISABLED", new Color(1f, 0.55f, 0.55f));
                     }
+                }
+                if (Input.GetKeyDown(this.keyGameSpeed1x))
+                {
+                    this.gameSpeed = 1f;
+                    Time.timeScale = 1f;
+                    this.AddMenuNotification("Game Speed: 1x", new Color(0.45f, 1f, 0.55f));
+                }
+                if (Input.GetKeyDown(this.keyGameSpeed2x))
+                {
+                    this.gameSpeed = 2f;
+                    Time.timeScale = 2f;
+                    this.AddMenuNotification("Game Speed: 2x", new Color(0.45f, 1f, 0.55f));
+                }
+                if (Input.GetKeyDown(this.keyGameSpeed5x))
+                {
+                    this.gameSpeed = 5f;
+                    Time.timeScale = 5f;
+                    this.AddMenuNotification("Game Speed: 5x", new Color(0.45f, 1f, 0.55f));
+                }
+                if (Input.GetKeyDown(this.keyGameSpeed10x))
+                {
+                    this.gameSpeed = 10f;
+                    Time.timeScale = 10f;
+                    this.AddMenuNotification("Game Speed: 10x", new Color(0.45f, 1f, 0.55f));
+                }
+                if (Input.GetKeyDown(this.keyEquipAxe))
+                {
+                    this.StartToolEquipRequest(1);
+                    this.AddMenuNotification("Equipping Axe", new Color(0.45f, 1f, 0.55f));
+                }
+                if (Input.GetKeyDown(this.keyEquipNet))
+                {
+                    this.StartToolEquipRequest(2);
+                    this.AddMenuNotification("Equipping Net", new Color(0.45f, 1f, 0.55f));
+                }
+                if (Input.GetKeyDown(this.keyEquipRod))
+                {
+                    this.StartToolEquipRequest(3);
+                    this.AddMenuNotification("Equipping Rod", new Color(0.45f, 1f, 0.55f));
                 }
             }
 
@@ -1984,13 +2056,12 @@ namespace HeartopiaMod
             GUILayout.BeginArea(navListRect);
             GUILayout.BeginVertical();
                 this.DrawSidebarTabButton("Self", 0);
-                this.DrawSidebarTabButton("Auto Farm", 2);
-                this.DrawSidebarTabButton("Automation", 3);
-                this.DrawSidebarTabButton("Auto Cook", 4);
-                this.DrawSidebarTabButton("Radar", 5);
-                this.DrawSidebarTabButton("Teleport", 6);
-                this.DrawSidebarTabButton("Items Selector", 7);
-                this.DrawSidebarTabButton("Settings", 8);
+                this.DrawSidebarTabButton("Resource Gathering", 2);
+                this.DrawSidebarTabButton("Features", 3);
+                this.DrawSidebarTabButton("Radar", 4);
+                this.DrawSidebarTabButton("Teleport", 5);
+                this.DrawSidebarTabButton("Items Selector", 6);
+                this.DrawSidebarTabButton("Settings", 7);
             GUILayout.EndVertical();
             GUILayout.EndArea();
 
@@ -2020,11 +2091,10 @@ namespace HeartopiaMod
                 if (this.selectedTab == 0) calculatedHeight = this.DrawSelfTab(contentY);
                 else if (this.selectedTab == 2) calculatedHeight = this.DrawAutoFarmTab(contentY);
                 else if (this.selectedTab == 3) calculatedHeight = this.DrawAutomationTab(contentY);
-                else if (this.selectedTab == 4) calculatedHeight = this.DrawAutoCookTab(contentY);
-                else if (this.selectedTab == 5) calculatedHeight = this.DrawRadarTab(contentY);
-                else if (this.selectedTab == 6) calculatedHeight = this.DrawTeleportTab(contentY);
-                else if (this.selectedTab == 7) calculatedHeight = this.DrawBulkSelectorTab(contentY);
-                else if (this.selectedTab == 8) calculatedHeight = this.DrawSettingsTab(contentY);
+                else if (this.selectedTab == 4) calculatedHeight = this.DrawRadarTab(contentY);
+                else if (this.selectedTab == 5) calculatedHeight = this.DrawTeleportTab(contentY);
+                else if (this.selectedTab == 6) calculatedHeight = this.DrawBulkSelectorTab(contentY);
+                else if (this.selectedTab == 7) calculatedHeight = this.DrawSettingsTab(contentY);
                 GUI.EndScrollView();
             }
             finally
@@ -2070,9 +2140,8 @@ namespace HeartopiaMod
                 return 1200f;
             }
             if (this.selectedTab == 3) return 760f;
-            if (this.selectedTab == 4) return 880f;
-            if (this.selectedTab == 5) return 900f;
-            if (this.selectedTab == 6)
+            if (this.selectedTab == 4) return 900f;
+            if (this.selectedTab == 5)
             {
                 if (this.teleportSubTab == 0) return 620f;
                 if (this.teleportSubTab == 1) return 80f + (this.animalCareLocations.Length * 45f);
@@ -2083,8 +2152,8 @@ namespace HeartopiaMod
                 if (this.teleportSubTab == 6) return 180f + (this.customTeleportList.Count * 38f);
                 return 420f; // XYZ
             }
-            if (this.selectedTab == 7) return 780f;
-            if (this.selectedTab == 8 && this.settingsSubTab == 2)
+            if (this.selectedTab == 6) return 780f;
+            if (this.selectedTab == 7 && this.settingsSubTab == 2)
             {
                 return this.uiThemePickerOpen ? 1180f : 860f;
             }
@@ -2308,13 +2377,12 @@ namespace HeartopiaMod
         private string GetSelectedTabHeader()
         {
             if (this.selectedTab == 0) return "Self";
-            if (this.selectedTab == 2) return "Auto Farm";
-            if (this.selectedTab == 3) return "Automation";
-            if (this.selectedTab == 4) return "Auto Cook";
-            if (this.selectedTab == 5) return "Radar";
-            if (this.selectedTab == 6) return "Teleport";
-            if (this.selectedTab == 7) return "Items Selector";
-            if (this.selectedTab == 8) return "Settings";
+            if (this.selectedTab == 2) return "Resource Gathering";
+            if (this.selectedTab == 3) return "Features";
+            if (this.selectedTab == 4) return "Radar";
+            if (this.selectedTab == 5) return "Teleport";
+            if (this.selectedTab == 6) return "Items Selector";
+            if (this.selectedTab == 7) return "Settings";
             return "Unknown";
         }
     
@@ -2671,30 +2739,27 @@ namespace HeartopiaMod
             }
             else if (this.selectedTab == 2)
             {
-                tabs.Add(("Main", () => this.autoFarmSubTab == 0, () => this.SetAutoFarmSubTab(0)));
-                tabs.Add(("Resource Farm", () => this.autoFarmSubTab == 1, () => this.SetAutoFarmSubTab(1)));
-                tabs.Add(("Fish Farm", () => this.autoFarmSubTab == 2, () => this.SetAutoFarmSubTab(2)));
-                tabs.Add(("Insect Farm", () => this.autoFarmSubTab == 3, () => this.SetAutoFarmSubTab(3)));
+                tabs.Add(("Foraging", () => this.autoFarmSubTab == 0, () => this.SetAutoFarmSubTab(0)));
+                tabs.Add(("Chop & Mine", () => this.autoFarmSubTab == 1, () => this.SetAutoFarmSubTab(1)));
+                tabs.Add(("Fishing", () => this.autoFarmSubTab == 2, () => this.SetAutoFarmSubTab(2)));
+                tabs.Add(("Insects", () => this.autoFarmSubTab == 3, () => this.SetAutoFarmSubTab(3)));
                 // Auto Draw quick link removed
             }
             else if (this.selectedTab == 3)
             {
                 tabs.Add(("Main", () => this.automationSubTab == 0, () => this.SetAutomationSubTab(0)));
-                tabs.Add(("Bag", () => this.automationSubTab == 1, () => this.SetAutomationSubTab(1)));
-                tabs.Add(("Sculpture", () => this.automationSubTab == 2, () => this.SetAutomationSubTab(2)));
+                tabs.Add(("Food & Repair", () => this.automationSubTab == 1, () => this.SetAutomationSubTab(1)));
+                tabs.Add(("Snow Sculpting", () => this.automationSubTab == 2, () => this.SetAutomationSubTab(2)));
                 tabs.Add(("Cat Play", () => this.automationSubTab == 3, () => this.SetAutomationSubTab(3)));
                 tabs.Add(("Auto Buy", () => this.automationSubTab == 4, () => this.SetAutomationSubTab(4)));
+                tabs.Add(("Auto Cook", () => this.automationSubTab == 5, () => this.SetAutomationSubTab(5)));
             }
             else if (this.selectedTab == 4)
-            {
-                // No sub-tabs for Auto Cook
-            }
-            else if (this.selectedTab == 5)
             {
                 tabs.Add(("Main", () => this.radarSubTab == 0, () => this.SetRadarSubTab(0)));
                 tabs.Add(("Settings", () => this.radarSubTab == 1, () => this.SetRadarSubTab(1)));
             }
-            else if (this.selectedTab == 6)
+            else if (this.selectedTab == 5)
             {
                 tabs.Add(("Home", () => this.teleportSubTab == 0, () => this.SetTeleportSubTab(0)));
                 tabs.Add(("Animal Care", () => this.teleportSubTab == 1, () => this.SetTeleportSubTab(1)));
@@ -2705,11 +2770,11 @@ namespace HeartopiaMod
                 tabs.Add(("Custom", () => this.teleportSubTab == 6, () => this.SetTeleportSubTab(6)));
                 tabs.Add(("XYZ", () => this.teleportSubTab == 7, () => this.SetTeleportSubTab(7)));
             }
-            else if (this.selectedTab == 7)
+            else if (this.selectedTab == 6)
             {
                 // No sub-tabs for Items Selector
             }
-            else if (this.selectedTab == 8)
+            else if (this.selectedTab == 7)
             {
                 tabs.Add(("Main", () => this.settingsSubTab == 0, () => this.SetSettingsSubTab(0)));
                 tabs.Add(("Keybinds", () => this.settingsSubTab == 1, () => this.SetSettingsSubTab(1)));
@@ -3034,7 +3099,7 @@ namespace HeartopiaMod
             }
 
             bool flag = this.AnyRadarLootToggleEnabled();
-            string text = this.autoFarmActive ? "DISABLE AUTO FARM" : "ENABLE AUTO FARM";
+            string text = this.autoFarmActive ? "DISABLE AUTO FORAGING" : "ENABLE AUTO FORAGING";
             bool flag2 = this.DrawPrimaryActionButton(new Rect(20f, (float)startY, 260f, 40f), text);
             if (flag2)
             {
@@ -3249,7 +3314,7 @@ namespace HeartopiaMod
                 num += 30;
             }
 
-            GUI.Label(new Rect(20f, (float)num, 260f, 180f), "Auto Farm will:\n• Enable Auto Collect\n• Enable x5.0 GameSpeed\n• Teleport to closest node\n• Auto-rotate camera if stuck\n• Respect radar toggles for farming\n• Skip nodes on cooldown\n• Cycle through locations if nothing is found\n• PRIORITIZE selected loot types first\n• SEEK priority locations FIRST when enabled");
+            GUI.Label(new Rect(20f, (float)num, 260f, 180f), "Auto Foraging will:\n• Enable Auto Collect\n• Enable x5.0 GameSpeed\n• Teleport to closest node\n• Auto-rotate camera if stuck\n• Respect radar toggles for foraging\n• Skip nodes on cooldown\n• Cycle through locations if nothing is found\n• PRIORITIZE selected loot types first\n• SEEK priority locations FIRST when enabled");
             return (float)num + 190f;
         }
 
@@ -3261,7 +3326,7 @@ namespace HeartopiaMod
                 this.StartToolEquipRequest(1);
             }
             num += 45;
-            string toggleText = this.autoResourceFarmEnabled ? "DISABLE RESOURCE FARM" : "ENABLE RESOURCE FARM";
+            string toggleText = this.autoResourceFarmEnabled ? "DISABLE CHOP & MINE" : "ENABLE CHOP & MINE";
             if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 40f), toggleText))
             {
                 this.ToggleResourceFarm();
@@ -3382,7 +3447,7 @@ namespace HeartopiaMod
             num += 45;
             
 
-            GUI.Label(new Rect(20f, (float)num, 360f, 120f), "Resource Farm flow:\n• Build list of available markers\n• Shuffle and teleport to markers\n• Simulate F key for configured duration\n• Mark resource collected and set cooldowns");
+            GUI.Label(new Rect(20f, (float)num, 360f, 120f), "Chop & Mine flow:\n• Build list of available markers\n• Shuffle and teleport to markers\n• Simulate F key for configured duration\n• Mark resource collected and set cooldowns");
             return (float)num + 120f;
         }
 
@@ -3393,152 +3458,126 @@ namespace HeartopiaMod
             // Simple, consistent layout: Farm toggle, sliders, Manual toggle
             GUIStyle small = new GUIStyle(GUI.skin.label) { fontSize = 12 };
 
-            // Farm toggle + status
-            if (this.autoFishFarm != null)
+            // Equip Rod button
+            if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "Equip Rod"))
             {
-                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "Equip Rod"))
-                {
-                    this.StartToolEquipRequest(3);
-                }
-                num += 45;
-                GUI.Label(new Rect(20f, (float)num, 520f, 24f), "Auto Fishing Farm (Auto Teleport)");
-                num += 20;
-                string farmLabel = this.autoFishFarm.farmEnabled ? "Stop Farm" : "Start Farm";
-                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), farmLabel))
-                {
-                    this.autoFishFarm.ToggleFarm();
-                    if (this.autoFishFarm.farmEnabled)
-                    {
-                        this.showFishShadowRadar = true;
-                        this.isRadarActive = true;
-                        this.RunRadar();
-                    }
-                    else
-                    {
-                        this.showFishShadowRadar = false;
-                    }
-                    // If started, set auto-stop timestamp if enabled
-                    if (this.autoFishFarm.farmEnabled)
-                    {
-                        int secs = this.GetAutoFishFarmAutoStopSeconds();
-                        if (this.autoFishFarmAutoStopEnabled && secs > 0)
-                        {
-                            this.autoFishFarmAutoStopAt = Time.unscaledTime + secs;
-                            this.AddMenuNotification("Auto Fishing Farm auto-stop set: " + this.FormatDurationHms(secs), new Color(0.55f, 0.88f, 1f));
-                        }
-                        else
-                        {
-                            this.autoFishFarmAutoStopAt = -1f;
-                        }
-                    }
-                    else
-                    {
-                        this.autoFishFarmAutoStopAt = -1f;
-                    }
-                }
-                num += 45;
+                this.StartToolEquipRequest(3);
+            }
+            num += 45;
 
-                // Auto-stop timer UI (only for Auto Teleport farm)
-                this.autoFishFarmAutoStopEnabled = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.autoFishFarmAutoStopEnabled, "Auto Stop Timer");
-                num += 30;
-                if (this.autoFishFarmAutoStopEnabled)
+            // Teleport toggle
+            bool isAutoFishingEnabled = (this.autoFishLogic != null && this.autoFishLogic.autoFishEnabled) || (this.autoFishFarm != null && this.autoFishFarm.farmEnabled);
+            GUI.enabled = !isAutoFishingEnabled;
+            this.autoFishTeleportEnabled = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.autoFishTeleportEnabled, "Teleport Fishing");
+            GUI.enabled = true;
+            num += 30;
+
+            // Single enable button
+            string buttonText = isAutoFishingEnabled ? "Disable Auto Fishing" : "Enable Auto Fishing";
+            if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), buttonText))
+            {
+                if (isAutoFishingEnabled)
                 {
-                    GUIStyle timerSmall = new GUIStyle(GUI.skin.label) { fontSize = 12 };
-                    GUI.Label(new Rect(20f, (float)num, 260f, 18f), "Timer (HH:MM:SS)", timerSmall);
-                    num += 20;
-                    GUI.Label(new Rect(20f, (float)num, 45f, 20f), "H", timerSmall);
-                    this.autoFishFarmAutoStopHoursInput = GUI.TextField(new Rect(35f, (float)num, 55f, 22f), this.autoFishFarmAutoStopHoursInput, 2);
-                    GUI.Label(new Rect(95f, (float)num, 10f, 20f), ":", timerSmall);
-                    GUI.Label(new Rect(108f, (float)num, 45f, 20f), "M", timerSmall);
-                    this.autoFishFarmAutoStopMinutesInput = GUI.TextField(new Rect(123f, (float)num, 55f, 22f), this.autoFishFarmAutoStopMinutesInput, 2);
-                    GUI.Label(new Rect(183f, (float)num, 10f, 20f), ":", timerSmall);
-                    GUI.Label(new Rect(196f, (float)num, 45f, 20f), "S", timerSmall);
-                    this.autoFishFarmAutoStopSecondsInput = GUI.TextField(new Rect(211f, (float)num, 55f, 22f), this.autoFishFarmAutoStopSecondsInput, 2);
+                    // Disable both
+                    if (this.autoFishLogic != null) this.autoFishLogic.ToggleAutoFish();
+                    if (this.autoFishFarm != null) this.autoFishFarm.ToggleFarm();
+                    this.showFishShadowRadar = false;
+                }
+                else
+                {
+                    // Enable based on teleport setting
+                    if (this.autoFishTeleportEnabled)
+                    {
+                        if (this.autoFishFarm != null) this.autoFishFarm.ToggleFarm();
+                    }
+                    else
+                    {
+                        if (this.autoFishLogic != null) this.autoFishLogic.ToggleAutoFish();
+                    }
+                    this.showFishShadowRadar = true;
+                    this.isRadarActive = true;
+                    this.RunRadar();
+                }
+            }
+            num += 45;
+
+            // Settings (shown if auto fishing is enabled or subsystems available)
+            if (isAutoFishingEnabled || this.autoFishFarm != null || this.autoFishLogic != null)
+            {
+                // Auto-stop timer UI (for teleport mode)
+                if (this.autoFishTeleportEnabled && this.autoFishFarm != null)
+                {
+                    this.autoFishFarmAutoStopEnabled = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.autoFishFarmAutoStopEnabled, "Auto Stop Timer");
+                    num += 30;
+                    if (this.autoFishFarmAutoStopEnabled)
+                    {
+                        GUIStyle timerSmall = new GUIStyle(GUI.skin.label) { fontSize = 12 };
+                        GUI.Label(new Rect(20f, (float)num, 260f, 18f), "Timer (HH:MM:SS)", timerSmall);
+                        num += 20;
+                        GUI.Label(new Rect(20f, (float)num, 45f, 20f), "H", timerSmall);
+                        this.autoFishFarmAutoStopHoursInput = GUI.TextField(new Rect(35f, (float)num, 55f, 22f), this.autoFishFarmAutoStopHoursInput, 2);
+                        GUI.Label(new Rect(95f, (float)num, 10f, 20f), ":", timerSmall);
+                        GUI.Label(new Rect(108f, (float)num, 45f, 20f), "M", timerSmall);
+                        this.autoFishFarmAutoStopMinutesInput = GUI.TextField(new Rect(123f, (float)num, 55f, 22f), this.autoFishFarmAutoStopMinutesInput, 2);
+                        GUI.Label(new Rect(183f, (float)num, 10f, 20f), ":", timerSmall);
+                        GUI.Label(new Rect(196f, (float)num, 45f, 20f), "S", timerSmall);
+                        this.autoFishFarmAutoStopSecondsInput = GUI.TextField(new Rect(211f, (float)num, 55f, 22f), this.autoFishFarmAutoStopSecondsInput, 2);
+                        num += 28;
+                        int parsedF;
+                        if (int.TryParse(this.autoFishFarmAutoStopHoursInput, out parsedF)) { this.autoFishFarmAutoStopHours = Mathf.Clamp(parsedF, 0, 23); this.autoFishFarmAutoStopHoursInput = this.autoFishFarmAutoStopHours.ToString(); }
+                        if (int.TryParse(this.autoFishFarmAutoStopMinutesInput, out parsedF)) { this.autoFishFarmAutoStopMinutes = Mathf.Clamp(parsedF, 0, 59); this.autoFishFarmAutoStopMinutesInput = this.autoFishFarmAutoStopMinutes.ToString(); }
+                        if (int.TryParse(this.autoFishFarmAutoStopSecondsInput, out parsedF)) { this.autoFishFarmAutoStopSeconds = Mathf.Clamp(parsedF, 0, 59); this.autoFishFarmAutoStopSecondsInput = this.autoFishFarmAutoStopSeconds.ToString(); }
+                        int afSecs = this.GetAutoFishFarmAutoStopSeconds();
+                        if (afSecs <= 0) { Color prev = GUI.color; GUI.color = new Color(1f, 0.45f, 0.45f); GUI.Label(new Rect(20f, (float)num, 300f, 20f), "Set at least 1 second to enable auto-stop.", timerSmall); GUI.color = prev; num += 24; }
+                        else { GUI.Label(new Rect(20f, (float)num, 320f, 20f), "Auto-stop after: " + this.FormatDurationHms(afSecs), timerSmall); num += 22; if (this.autoFishFarm.farmEnabled && this.autoFishFarmAutoStopAt > 0f) { int remaining = Mathf.Max(0, Mathf.CeilToInt(this.autoFishFarmAutoStopAt - Time.unscaledTime)); GUI.Label(new Rect(20f, (float)num, 320f, 20f), "Time remaining: " + this.FormatDurationHms(remaining), timerSmall); num += 22; } }
+                    }
+
+                    // Sliders for farm settings
+                    GUI.Label(new Rect(20f, (float)num, 120f, 18f), "Scan Timeout", small);
+                    GUI.Label(new Rect(150f, (float)num, 120f, 18f), this.autoFishFarm.scanTimeout.ToString("F0") + "s", small);
+                    num += 18;
+                    float prevFishScan = this.autoFishFarm.scanTimeout;
+                    this.autoFishFarm.scanTimeout = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 18f), this.autoFishFarm.scanTimeout, 3f, 20f);
+                    if (Math.Abs(this.autoFishFarm.scanTimeout - prevFishScan) > 0.001f) { try { this.SaveKeybinds(false); } catch { } }
+                    num += 26;
+
+                    GUI.Label(new Rect(20f, (float)num, 120f, 18f), "Teleport Delay", small);
+                    GUI.Label(new Rect(150f, (float)num, 120f, 18f), this.autoFishFarm.teleportDelay.ToString("F1") + "s", small);
+                    num += 18;
+                    float prevFishTp = this.autoFishFarm.teleportDelay;
+                    this.autoFishFarm.teleportDelay = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 18f), this.autoFishFarm.teleportDelay, 1f, 5f);
+                    if (Math.Abs(this.autoFishFarm.teleportDelay - prevFishTp) > 0.001f) { try { this.SaveKeybinds(false); } catch { } }
                     num += 28;
-                    int parsedF;
-                    if (int.TryParse(this.autoFishFarmAutoStopHoursInput, out parsedF)) { this.autoFishFarmAutoStopHours = Mathf.Clamp(parsedF, 0, 23); this.autoFishFarmAutoStopHoursInput = this.autoFishFarmAutoStopHours.ToString(); }
-                    if (int.TryParse(this.autoFishFarmAutoStopMinutesInput, out parsedF)) { this.autoFishFarmAutoStopMinutes = Mathf.Clamp(parsedF, 0, 59); this.autoFishFarmAutoStopMinutesInput = this.autoFishFarmAutoStopMinutes.ToString(); }
-                    if (int.TryParse(this.autoFishFarmAutoStopSecondsInput, out parsedF)) { this.autoFishFarmAutoStopSeconds = Mathf.Clamp(parsedF, 0, 59); this.autoFishFarmAutoStopSecondsInput = this.autoFishFarmAutoStopSeconds.ToString(); }
-                    int afSecs = this.GetAutoFishFarmAutoStopSeconds();
-                    if (afSecs <= 0) { Color prev = GUI.color; GUI.color = new Color(1f, 0.45f, 0.45f); GUI.Label(new Rect(20f, (float)num, 300f, 20f), "Set at least 1 second to enable auto-stop.", timerSmall); GUI.color = prev; num += 24; }
-                    else { GUI.Label(new Rect(20f, (float)num, 320f, 20f), "Auto-stop after: " + this.FormatDurationHms(afSecs), timerSmall); num += 22; if (this.autoFishFarm.farmEnabled && this.autoFishFarmAutoStopAt > 0f) { int remaining = Mathf.Max(0, Mathf.CeilToInt(this.autoFishFarmAutoStopAt - Time.unscaledTime)); GUI.Label(new Rect(20f, (float)num, 320f, 20f), "Time remaining: " + this.FormatDurationHms(remaining), timerSmall); num += 22; } }
                 }
-
-                // Sliders for farm settings
-                GUI.Label(new Rect(20f, (float)num, 120f, 18f), "Scan Timeout", small);
-                GUI.Label(new Rect(150f, (float)num, 120f, 18f), this.autoFishFarm.scanTimeout.ToString("F0") + "s", small);
-                num += 18;
-                float prevFishScan = this.autoFishFarm.scanTimeout;
-                this.autoFishFarm.scanTimeout = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 18f), this.autoFishFarm.scanTimeout, 3f, 20f);
-                if (Math.Abs(this.autoFishFarm.scanTimeout - prevFishScan) > 0.001f) { try { this.SaveKeybinds(false); } catch { } }
-                num += 26;
-
-                GUI.Label(new Rect(20f, (float)num, 120f, 18f), "Teleport Delay", small);
-                GUI.Label(new Rect(150f, (float)num, 120f, 18f), this.autoFishFarm.teleportDelay.ToString("F1") + "s", small);
-                num += 18;
-                float prevFishTp = this.autoFishFarm.teleportDelay;
-                this.autoFishFarm.teleportDelay = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 18f), this.autoFishFarm.teleportDelay, 1f, 5f);
-                if (Math.Abs(this.autoFishFarm.teleportDelay - prevFishTp) > 0.001f) { try { this.SaveKeybinds(false); } catch { } }
-                num += 28;
-            }
-            else
-            {
-                GUI.Label(new Rect(20f, (float)num, 520f, 36f), "AutoFish subsystem not initialized.", small);
-                num += 40;
-            }
-
-            // Manual fishing toggle
-            if (this.autoFishLogic != null)
-            {
-                GUI.Label(new Rect(20f, (float)num, 520f, 24f), "Auto Fishing Farm (No Teleport)");
-                num += 20;
-                string fishLabel = this.autoFishLogic.autoFishEnabled ? "Stop Auto-Fish" : "Start Auto-Fish";
-                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), fishLabel))
+                else if (!this.autoFishTeleportEnabled && this.autoFishLogic != null)
                 {
-                    this.autoFishLogic.ToggleAutoFish();
-                    if (this.autoFishLogic.autoFishEnabled)
-                    {
-                        this.showFishShadowRadar = true;
-                        this.isRadarActive = true;
-                        this.RunRadar();
-                    }
-                    else
-                    {
-                        this.showFishShadowRadar = false;
-                    }
+                    // Settings for standing fishing
+                    GUI.Label(new Rect(20f, (float)num, 150f, 18f), "Fish Detect Range", small);
+                    GUI.Label(new Rect(170f, (float)num, 110f, 18f), this.autoFishLogic.fishShadowDetectRange.ToString("F1") + "m", small);
+                    num += 18;
+                    float prevFishRange = this.autoFishLogic.fishShadowDetectRange;
+                    this.autoFishLogic.fishShadowDetectRange = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 18f), this.autoFishLogic.fishShadowDetectRange, 1f, 20f);
+                    if (Math.Abs(this.autoFishLogic.fishShadowDetectRange - prevFishRange) > 0.001f) { try { this.SaveKeybinds(false); } catch { } }
+
+                    num += 26;
+                    GUI.Label(new Rect(20f, (float)num, 150f, 18f), "Max Reel", small);
+                    GUI.Label(new Rect(170f, (float)num, 110f, 18f), this.autoFishLogic.reelMaxDuration.ToString("F0") + "s", small);
+                    num += 18;
+                    this.autoFishLogic.reelMaxDuration = Mathf.Round(this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 18f), this.autoFishLogic.reelMaxDuration, 10f, 120f));
+
+                    num += 26;
+                    GUI.Label(new Rect(20f, (float)num, 120f, 18f), "Hold Time", small);
+                    GUI.Label(new Rect(120f, (float)num, 60f, 18f), this.autoFishLogic.reelHoldDuration.ToString("F1") + "s", small);
+                    GUI.Label(new Rect(185f, (float)num, 95f, 18f), "Pause", small);
+                    GUI.Label(new Rect(255f, (float)num, 60f, 18f), this.autoFishLogic.reelPauseDuration.ToString("F1") + "s", small);
+                    num += 18;
+                    float prevReelHold = this.autoFishLogic.reelHoldDuration;
+                    float prevReelPause = this.autoFishLogic.reelPauseDuration;
+                    this.autoFishLogic.reelHoldDuration = this.DrawAccentSlider(new Rect(20f, (float)num, 125f, 18f), this.autoFishLogic.reelHoldDuration, 1f, 8f);
+                    this.autoFishLogic.reelPauseDuration = this.DrawAccentSlider(new Rect(155f, (float)num, 125f, 18f), this.autoFishLogic.reelPauseDuration, 0.2f, 2f);
+                    if (Math.Abs(this.autoFishLogic.reelHoldDuration - prevReelHold) > 0.001f || Math.Abs(this.autoFishLogic.reelPauseDuration - prevReelPause) > 0.001f) { try { this.SaveKeybinds(false); } catch { } }
+                    num += 26;
                 }
-                num += 45;
-
-                GUI.Label(new Rect(20f, (float)num, 150f, 18f), "Fish Detect Range", small);
-                GUI.Label(new Rect(170f, (float)num, 110f, 18f), this.autoFishLogic.fishShadowDetectRange.ToString("F1") + "m", small);
-                num += 18;
-                float prevFishRange = this.autoFishLogic.fishShadowDetectRange;
-                this.autoFishLogic.fishShadowDetectRange = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 18f), this.autoFishLogic.fishShadowDetectRange, 1f, 20f);
-                if (Math.Abs(this.autoFishLogic.fishShadowDetectRange - prevFishRange) > 0.001f) { try { this.SaveKeybinds(false); } catch { } }
-
-                num += 26;
-                GUI.Label(new Rect(20f, (float)num, 150f, 18f), "Max Reel", small);
-                GUI.Label(new Rect(170f, (float)num, 110f, 18f), this.autoFishLogic.reelMaxDuration.ToString("F0") + "s", small);
-                num += 18;
-                this.autoFishLogic.reelMaxDuration = Mathf.Round(this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 18f), this.autoFishLogic.reelMaxDuration, 10f, 120f));
-
-                num += 26;
-                GUI.Label(new Rect(20f, (float)num, 120f, 18f), "Hold Time", small);
-                GUI.Label(new Rect(120f, (float)num, 60f, 18f), this.autoFishLogic.reelHoldDuration.ToString("F1") + "s", small);
-                GUI.Label(new Rect(185f, (float)num, 95f, 18f), "Pause", small);
-                GUI.Label(new Rect(255f, (float)num, 60f, 18f), this.autoFishLogic.reelPauseDuration.ToString("F1") + "s", small);
-                num += 18;
-                float prevReelHold = this.autoFishLogic.reelHoldDuration;
-                float prevReelPause = this.autoFishLogic.reelPauseDuration;
-                this.autoFishLogic.reelHoldDuration = this.DrawAccentSlider(new Rect(20f, (float)num, 125f, 18f), this.autoFishLogic.reelHoldDuration, 1f, 8f);
-                this.autoFishLogic.reelPauseDuration = this.DrawAccentSlider(new Rect(155f, (float)num, 125f, 18f), this.autoFishLogic.reelPauseDuration, 0.2f, 2f);
-                if (Math.Abs(this.autoFishLogic.reelHoldDuration - prevReelHold) > 0.001f || Math.Abs(this.autoFishLogic.reelPauseDuration - prevReelPause) > 0.001f) { try { this.SaveKeybinds(false); } catch { } }
-                num += 26;
-            }
-            else
-            {
-                GUI.Label(new Rect(20f, (float)num, 520f, 36f), "Manual fishing unavailable.", small);
-                num += 40;
             }
 
             return (float)num + 20f;
@@ -3648,6 +3687,14 @@ namespace HeartopiaMod
             {
                 GUI.Label(new Rect(20f, (float)num, 260f, 24f), "Bag Automation");
                 num += 35;
+
+                // Refresh Button
+                bool flagRefresh = this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "REFRESH & SCAN");
+                if (flagRefresh)
+                {
+                    this.RefreshBulkSelectorCache();
+                }
+                num += 40;
 
                 // Status section
                 string repairStatus = this.isRepairing ? $"Running (step {this.repairStep})" : "Idle";
@@ -3951,6 +3998,12 @@ namespace HeartopiaMod
 
                 return (float)num;
             }
+
+            if (this.automationSubTab == 5)
+            {
+                return this.DrawAutoCookTab(startY);
+            }
+
             return (float)num;
         }
 
@@ -12011,8 +12064,8 @@ namespace HeartopiaMod
                         {
                             case "Toggle Menu": this.keyToggleMenu = newKey; break;
                             case "Toggle Radar": this.keyToggleRadar = newKey; break;
-                            case "Auto Farm": this.keyAutoFarm = newKey; break;
-                            case "Auto Fish Farm (Auto Teleport)": this.keyAutoFishFarm = newKey; break;
+                            case "Auto Foraging": this.keyAutoForaging = newKey; break;
+                            case "Auto Fish Farm (Auto Teleport)": this.keyAutoFishingTeleport = newKey; break;
                             case "Auto Fish (No Teleport)": this.keyAutoFish = newKey; break;
                             case "Auto Cook": this.keyAutoCook = newKey; break;
                             case "Bypass UI": this.keyBypassUI = newKey; break;
@@ -12029,6 +12082,13 @@ namespace HeartopiaMod
                             case "Anti AFK": this.keyAntiAfk = newKey; break;
                             case "Bypass Overlap": this.keyBypassOverlap = newKey; break;
                             case "Bird Vacuum": this.keyBirdVacuum = newKey; break;
+                            case "Game Speed 1x": this.keyGameSpeed1x = newKey; break;
+                            case "Game Speed 2x": this.keyGameSpeed2x = newKey; break;
+                            case "Game Speed 5x": this.keyGameSpeed5x = newKey; break;
+                            case "Game Speed 10x": this.keyGameSpeed10x = newKey; break;
+                            case "Equip Axe": this.keyEquipAxe = newKey; break;
+                            case "Equip Net": this.keyEquipNet = newKey; break;
+                            case "Equip Rod": this.keyEquipRod = newKey; break;
                         }
                         this.keyBindingActive = "";
                         this.keyBindAssignedAt = Time.unscaledTime;
@@ -12043,9 +12103,9 @@ namespace HeartopiaMod
             // Bind List
             this.DrawKeybindRow(ref num, "Toggle Menu", ref this.keyToggleMenu);
             this.DrawKeybindRow(ref num, "Toggle Radar", ref this.keyToggleRadar);
-            this.DrawKeybindRow(ref num, "Auto Farm", ref this.keyAutoFarm);
+            this.DrawKeybindRow(ref num, "Auto Foraging", ref this.keyAutoForaging);
             this.DrawKeybindRow(ref num, "Auto Fish (No Teleport)", ref this.keyAutoFish);
-            this.DrawKeybindRow(ref num, "Auto Fish Farm (Auto Teleport)", ref this.keyAutoFishFarm);
+            this.DrawKeybindRow(ref num, "Auto Fishing (Teleport)", ref this.keyAutoFishingTeleport);
             this.DrawKeybindRow(ref num, "Auto Cook", ref this.keyAutoCook);
             this.DrawKeybindRow(ref num, "Bypass UI", ref this.keyBypassUI);
             this.DrawKeybindRow(ref num, "Disable All", ref this.keyDisableAll);
@@ -12061,15 +12121,22 @@ namespace HeartopiaMod
             this.DrawKeybindRow(ref num, "Auto Snow Sculpture", ref this.autoSnowHotkey);
             this.DrawKeybindRow(ref num, "Bypass Overlap", ref this.keyBypassOverlap);
             this.DrawKeybindRow(ref num, "Bird Vacuum", ref this.keyBirdVacuum);
+            this.DrawKeybindRow(ref num, "Game Speed 1x", ref this.keyGameSpeed1x);
+            this.DrawKeybindRow(ref num, "Game Speed 2x", ref this.keyGameSpeed2x);
+            this.DrawKeybindRow(ref num, "Game Speed 5x", ref this.keyGameSpeed5x);
+            this.DrawKeybindRow(ref num, "Game Speed 10x", ref this.keyGameSpeed10x);
+            this.DrawKeybindRow(ref num, "Equip Axe", ref this.keyEquipAxe);
+            this.DrawKeybindRow(ref num, "Equip Net", ref this.keyEquipNet);
+            this.DrawKeybindRow(ref num, "Equip Rod", ref this.keyEquipRod);
             num += 6;
 
             if (this.DrawDangerActionButton(new Rect(20f, (float)num, 260f, 30f), "RESET TO DEFAULTS"))
             {
                 this.keyToggleMenu = KeyCode.Insert;
                 this.keyToggleRadar = KeyCode.None;
-                this.keyAutoFarm = KeyCode.None;
+                this.keyAutoForaging = KeyCode.None;
                 this.keyAutoFish = KeyCode.None;
-                this.keyAutoFishFarm = KeyCode.None;
+                this.keyAutoFishingTeleport = KeyCode.None;
                 this.keyAutoCook = KeyCode.None;
                 this.keyBypassUI = KeyCode.None;
                 this.keyDisableAll = KeyCode.None;
@@ -12085,6 +12152,13 @@ namespace HeartopiaMod
                 this.autoSnowHotkey = KeyCode.None;
                 this.keyBypassOverlap = KeyCode.None;
                 this.keyBirdVacuum = KeyCode.None;
+                this.keyGameSpeed1x = KeyCode.None;
+                this.keyGameSpeed2x = KeyCode.None;
+                this.keyGameSpeed5x = KeyCode.None;
+                this.keyGameSpeed10x = KeyCode.None;
+                this.keyEquipAxe = KeyCode.None;
+                this.keyEquipNet = KeyCode.None;
+                this.keyEquipRod = KeyCode.None;
                 this.notificationsEnabled = true;
                 this.hideIdEnabled = false;
                 this.showStatusOverlay = false;
