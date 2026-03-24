@@ -92,6 +92,9 @@ namespace HeartopiaMod
                 host.UI_AddMenuNotification($"Insect Farm {(insectFarmEnabled ? "Enabled" : "Disabled")}", insectFarmEnabled ? new Color(0.45f, 1f, 0.55f) : new Color(1f, 0.55f, 0.55f));
                 if (insectFarmEnabled)
                 {
+                    host.showInsectRadar = true;
+                    host.isRadarActive = true;
+                    host.RunRadar();
                     int secs = GetAutoInsectFarmAutoStopSeconds();
                     if (autoInsectFarmAutoStopEnabled && secs > 0)
                     {
@@ -105,6 +108,7 @@ namespace HeartopiaMod
                 }
                 else
                 {
+                    host.showInsectRadar = false;
                     autoInsectFarmAutoStopAt = -1f;
                 }
             }

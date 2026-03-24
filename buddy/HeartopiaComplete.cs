@@ -7958,7 +7958,7 @@ namespace HeartopiaMod
         }
 
         // Token: 0x0600001A RID: 26 RVA: 0x00004B54 File Offset: 0x00002D54
-        private void RunRadar()
+        public void RunRadar()
         {
             bool flag = this.radarContainer == null;
             if (flag)
@@ -13591,7 +13591,7 @@ namespace HeartopiaMod
         private GameObject radarContainer;
 
         // Token: 0x04000029 RID: 41
-        private bool isRadarActive = false;
+        public bool isRadarActive = false;
 
         // Token: 0x0400002A RID: 42
         private bool showMushroomRadar = false;
@@ -13616,7 +13616,7 @@ namespace HeartopiaMod
         private bool showBubbleRadar = false;
 
         // Token: 0x0400002E RID: 46
-        private bool showInsectRadar = false;
+        public bool showInsectRadar = false;
 
         // Token: 0x0400002F RID: 47
         private bool showFishShadowRadar = false;
