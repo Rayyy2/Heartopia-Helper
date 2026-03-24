@@ -2065,7 +2065,7 @@ namespace HeartopiaMod
             if (this.selectedTab == 2)
             {
                 if (this.autoFarmSubTab == 1) return 780f;
-                if (this.autoFarmSubTab == 2) return 260f;
+                if (this.autoFarmSubTab == 2) return 780f; // Fish Farm now matches Resource Farm scroll height
                 if (this.autoFarmSubTab == 3) return 320f;
                 return 1200f;
             }
@@ -2681,10 +2681,9 @@ namespace HeartopiaMod
             {
                 tabs.Add(("Main", () => this.automationSubTab == 0, () => this.SetAutomationSubTab(0)));
                 tabs.Add(("Bag", () => this.automationSubTab == 1, () => this.SetAutomationSubTab(1)));
-                tabs.Add(("Tools", () => this.automationSubTab == 2, () => this.SetAutomationSubTab(2)));
-                tabs.Add(("Sculpture", () => this.automationSubTab == 3, () => this.SetAutomationSubTab(3)));
-                tabs.Add(("Cat Play", () => this.automationSubTab == 4, () => this.SetAutomationSubTab(4)));
-                tabs.Add(("Auto Buy", () => this.automationSubTab == 5, () => this.SetAutomationSubTab(5)));
+                tabs.Add(("Sculpture", () => this.automationSubTab == 2, () => this.SetAutomationSubTab(2)));
+                tabs.Add(("Cat Play", () => this.automationSubTab == 3, () => this.SetAutomationSubTab(3)));
+                tabs.Add(("Auto Buy", () => this.automationSubTab == 4, () => this.SetAutomationSubTab(4)));
             }
             else if (this.selectedTab == 4)
             {
@@ -3257,6 +3256,11 @@ namespace HeartopiaMod
         private float DrawTreeFarmTab(int startY)
         {
             int num = startY;
+            if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "Equip Axe"))
+            {
+                this.StartToolEquipRequest(1);
+            }
+            num += 45;
             string toggleText = this.autoResourceFarmEnabled ? "DISABLE RESOURCE FARM" : "ENABLE RESOURCE FARM";
             if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 40f), toggleText))
             {
@@ -3392,12 +3396,27 @@ namespace HeartopiaMod
             // Farm toggle + status
             if (this.autoFishFarm != null)
             {
+                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "Equip Rod"))
+                {
+                    this.StartToolEquipRequest(3);
+                }
+                num += 45;
                 GUI.Label(new Rect(20f, (float)num, 520f, 24f), "Auto Fishing Farm (Auto Teleport)");
                 num += 20;
                 string farmLabel = this.autoFishFarm.farmEnabled ? "Stop Farm" : "Start Farm";
                 if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), farmLabel))
                 {
                     this.autoFishFarm.ToggleFarm();
+                    if (this.autoFishFarm.farmEnabled)
+                    {
+                        this.showFishShadowRadar = true;
+                        this.isRadarActive = true;
+                        this.RunRadar();
+                    }
+                    else
+                    {
+                        this.showFishShadowRadar = false;
+                    }
                     // If started, set auto-stop timestamp if enabled
                     if (this.autoFishFarm.farmEnabled)
                     {
@@ -3477,6 +3496,16 @@ namespace HeartopiaMod
                 if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), fishLabel))
                 {
                     this.autoFishLogic.ToggleAutoFish();
+                    if (this.autoFishLogic.autoFishEnabled)
+                    {
+                        this.showFishShadowRadar = true;
+                        this.isRadarActive = true;
+                        this.RunRadar();
+                    }
+                    else
+                    {
+                        this.showFishShadowRadar = false;
+                    }
                 }
                 num += 45;
 
@@ -3803,29 +3832,6 @@ namespace HeartopiaMod
 
             if (this.automationSubTab == 2)
             {
-                GUI.Label(new Rect(20f, (float)num, 260f, 22f), "Tools");
-                num += 28;
-                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "Auto Equip Axe"))
-                {
-                    this.StartToolEquipRequest(1);
-                }
-                num += 40;
-                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "Auto Equip Net"))
-                {
-                    this.StartToolEquipRequest(2);
-                }
-                num += 40;
-                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "Auto Equip Fishing Rod"))
-                {
-                    this.StartToolEquipRequest(3);
-                }
-                num += 45;
-                GUI.Label(new Rect(20f, (float)num, 260f, 70f), "One-click test action:\nOpens toolbox, then tries to equip selected tool.");
-                return (float)num + 90f;
-            }
-
-            if (this.automationSubTab == 3)
-            {
                 float left = 20f;
                 GUI.Label(new Rect(left, (float)num, 360f, 30f), "AUTO SNOW SCULPTURE");
                 num += 40;
@@ -3876,7 +3882,7 @@ namespace HeartopiaMod
                 return (float)num;
             }
 
-            if (this.automationSubTab == 4)
+            if (this.automationSubTab == 3)
             {
                 float left = 20f;
                 GUI.Label(new Rect(left, (float)num, 360f, 30f), "CAT PLAY (Auto Answer)");
@@ -3910,7 +3916,7 @@ namespace HeartopiaMod
                 return (float)num;
             }
 
-            if (this.automationSubTab == 5)
+            if (this.automationSubTab == 4)
             {
                 float left = 20f;
                 GUI.Label(new Rect(left, (float)num, 360f, 30f), "AUTO BUY (Cooking Store)");
@@ -5342,7 +5348,7 @@ namespace HeartopiaMod
             return toolsPanel != null && toolsPanel.activeInHierarchy;
         }
 
-        private void StartToolEquipRequest(int toolType)
+        public void StartToolEquipRequest(int toolType)
         {
             this.pendingToolEquipType = toolType;
             this.pendingToolEquipUntil = Time.time + 3f;
@@ -7958,7 +7964,7 @@ namespace HeartopiaMod
         }
 
         // Token: 0x0600001A RID: 26 RVA: 0x00004B54 File Offset: 0x00002D54
-        private void RunRadar()
+        public void RunRadar()
         {
             bool flag = this.radarContainer == null;
             if (flag)
@@ -13591,7 +13597,7 @@ namespace HeartopiaMod
         private GameObject radarContainer;
 
         // Token: 0x04000029 RID: 41
-        private bool isRadarActive = false;
+        public bool isRadarActive = false;
 
         // Token: 0x0400002A RID: 42
         private bool showMushroomRadar = false;
@@ -13616,10 +13622,10 @@ namespace HeartopiaMod
         private bool showBubbleRadar = false;
 
         // Token: 0x0400002E RID: 46
-        private bool showInsectRadar = false;
+        public bool showInsectRadar = false;
 
         // Token: 0x0400002F RID: 47
-        private bool showFishShadowRadar = false;
+        public bool showFishShadowRadar = false;
         // Draw radar objects as a GUI overlay (like meteors) regardless of world distance
         private bool showRadarGuiOverlay = false;
         

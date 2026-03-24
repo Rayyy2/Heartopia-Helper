@@ -85,6 +85,12 @@ namespace HeartopiaMod
             int num = startY;
             GUIStyle small = new GUIStyle(GUI.skin.label) { fontSize = 12 };
 
+            if (host.UI_DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "Equip Net"))
+            {
+                host.StartToolEquipRequest(2);
+            }
+            num += 45;
+
             string toggleText = insectFarmEnabled ? "DISABLE INSECT FARM" : "ENABLE INSECT FARM";
             if (host.UI_DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 40f), toggleText))
             {
@@ -92,6 +98,9 @@ namespace HeartopiaMod
                 host.UI_AddMenuNotification($"Insect Farm {(insectFarmEnabled ? "Enabled" : "Disabled")}", insectFarmEnabled ? new Color(0.45f, 1f, 0.55f) : new Color(1f, 0.55f, 0.55f));
                 if (insectFarmEnabled)
                 {
+                    host.showInsectRadar = true;
+                    host.isRadarActive = true;
+                    host.RunRadar();
                     int secs = GetAutoInsectFarmAutoStopSeconds();
                     if (autoInsectFarmAutoStopEnabled && secs > 0)
                     {
@@ -105,6 +114,7 @@ namespace HeartopiaMod
                 }
                 else
                 {
+                    host.showInsectRadar = false;
                     autoInsectFarmAutoStopAt = -1f;
                 }
             }
