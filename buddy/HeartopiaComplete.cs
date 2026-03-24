@@ -2121,43 +2121,150 @@ namespace HeartopiaMod
 
         private float GetSelectedTabEstimatedHeight()
         {
+            // Dynamic height calculation - future-proof for UI changes
+            return this.GetSelectedTabCalculatedHeight();
+        }
+
+        private float GetSelectedTabCalculatedHeight()
+        {
             if (this.selectedTab == 0)
             {
-                if (this.selfSubTab == 0) return 400f; // Self - Main
-                if (this.selfSubTab == 1) return 300f; // Self - Building
-                return 400f;
-            }
-            if (this.selectedTab == 1)
-            {
-                // Auto Draw: simple default height
-                return 740f;
+                return this.CalculateSelfTabHeight();
             }
             if (this.selectedTab == 2)
             {
-                if (this.autoFarmSubTab == 1) return 780f;
-                if (this.autoFarmSubTab == 2) return 780f; // Fish Farm now matches Resource Farm scroll height
-                if (this.autoFarmSubTab == 3) return 320f;
-                return 1200f;
+                return this.CalculateAutoFarmTabHeight();
             }
-            if (this.selectedTab == 3) return 760f;
-            if (this.selectedTab == 4) return 900f;
+            if (this.selectedTab == 3)
+            {
+                return this.CalculateFeaturesTabHeight();
+            }
+            if (this.selectedTab == 4)
+            {
+                return this.CalculateRadarTabHeight();
+            }
             if (this.selectedTab == 5)
             {
-                if (this.teleportSubTab == 0) return 620f;
-                if (this.teleportSubTab == 1) return 80f + (this.animalCareLocations.Length * 45f);
-                if (this.teleportSubTab == 2) return 80f + (this.npcLocations.Count * 45f);
-                if (this.teleportSubTab == 3) return 80f + (this.fastTravelLocations.Count * 45f);
-                if (this.teleportSubTab == 4) return 80f + (this.eventLocations.Count * 45f);
-                if (this.teleportSubTab == 5) return 80f + (this.houseLocations.Length * 45f);
-                if (this.teleportSubTab == 6) return 180f + (this.customTeleportList.Count * 38f);
-                return 420f; // XYZ
+                return this.CalculateTeleportTabHeight();
             }
-            if (this.selectedTab == 6) return 780f;
-            if (this.selectedTab == 7 && this.settingsSubTab == 2)
+            if (this.selectedTab == 6)
+            {
+                return this.CalculateBulkSelectorTabHeight();
+            }
+            if (this.selectedTab == 7)
+            {
+                return this.CalculateSettingsTabHeight();
+            }
+            return 740f; // Default fallback
+        }
+
+        private float CalculateSelfTabHeight()
+        {
+            int num = 0 + 25; // startY is 0 for calculation
+
+            if (this.selfSubTab == 0)
+            {
+                // Noclip Toggle
+                num += 30;
+
+                // Noclip Speed label and slider
+                num += 22 + 30;
+
+                // Noclip Boost label and slider
+                num += 22 + 30;
+
+                // Anti AFK toggle
+                num += 26;
+
+                // AFK interval label and slider
+                num += 22 + 30;
+
+                // Help text
+                return (float)num + 160f;
+            }
+
+            // Building sub-tab: Bypass overlap toggle
+            if (this.selfSubTab == 1)
+            {
+                num += 26; // Header
+                num += 36; // Toggle
+                // Credits text
+                return (float)num + 50f;
+            }
+
+            return (float)num + 50f;
+        }
+
+        private float CalculateAutoFarmTabHeight()
+        {
+            if (this.autoFarmSubTab == 1)
+            {
+                return this.CalculateTreeFarmTabHeight();
+            }
+            if (this.autoFarmSubTab == 2)
+            {
+                return this.CalculateNewSubTabHeight();
+            }
+            if (this.autoFarmSubTab == 3)
+            {
+                return 320f; // Insect farm tab height estimate
+            }
+
+            // Main tab content - estimate based on typical layout
+            return 780f; // Conservative estimate for main foraging tab
+        }
+
+        private float CalculateTreeFarmTabHeight()
+        {
+            // Estimate based on the complex layout with toggles and timer
+            return 780f; // Conservative estimate
+        }
+
+        private float CalculateNewSubTabHeight()
+        {
+            // Fish farming tab - estimate based on settings and toggles
+            return 780f; // Conservative estimate
+        }
+
+        private float CalculateFeaturesTabHeight()
+        {
+            // Features tab - automation controls
+            return 760f; // Conservative estimate
+        }
+
+        private float CalculateRadarTabHeight()
+        {
+            // Radar settings tab
+            return 900f; // Conservative estimate
+        }
+
+        private float CalculateTeleportTabHeight()
+        {
+            // Teleport tab with various sub-tabs
+            if (this.teleportSubTab == 0) return 620f;
+            if (this.teleportSubTab == 1) return 80f + (this.animalCareLocations.Length * 45f);
+            if (this.teleportSubTab == 2) return 80f + (this.npcLocations.Count * 45f);
+            if (this.teleportSubTab == 3) return 80f + (this.fastTravelLocations.Count * 45f);
+            if (this.teleportSubTab == 4) return 80f + (this.eventLocations.Count * 45f);
+            if (this.teleportSubTab == 5) return 80f + (this.houseLocations.Length * 45f);
+            if (this.teleportSubTab == 6) return 180f + (this.customTeleportList.Count * 38f);
+            return 420f; // XYZ fallback
+        }
+
+        private float CalculateBulkSelectorTabHeight()
+        {
+            // Items selector tab
+            return 780f; // Conservative estimate
+        }
+
+        private float CalculateSettingsTabHeight()
+        {
+            // Settings tab with sub-tabs
+            if (this.settingsSubTab == 2)
             {
                 return this.uiThemePickerOpen ? 1180f : 860f;
             }
-            return 740f;
+            return 860f; // Default settings height
         }
 
         private void DrawSidebarTabButton(string label, int tabIndex)
