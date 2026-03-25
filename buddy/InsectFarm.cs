@@ -91,7 +91,7 @@ namespace HeartopiaMod
             }
             num += 45;
 
-            string toggleText = insectFarmEnabled ? "DISABLE INSECT FARM" : "ENABLE INSECT FARM";
+            string toggleText = insectFarmEnabled ? "DISABLE INSECT CATCHING" : "ENABLE INSECT CATCHING";
             if (host.UI_DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 40f), toggleText))
             {
                 insectFarmEnabled = !insectFarmEnabled;
