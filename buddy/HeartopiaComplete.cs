@@ -99,15 +99,15 @@ namespace HeartopiaMod
         private KeyCode keyEquipAxe = KeyCode.None;
         private KeyCode keyEquipNet = KeyCode.None;
         private KeyCode keyEquipRod = KeyCode.None;
-        
+
         // Key Rebinding State
         private string keyBindingActive = "";
         private float keyBindAssignedAt = -999f;
-        
+
         // Notification check for auto repair
         private float lastNotificationCheck = 0f;
         private const float NOTIFICATION_CHECK_INTERVAL = 2f; // Check every 2 seconds
-        
+
         // --- WINDOWS API FOR ESC KEY ---
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr GetForegroundWindow();
@@ -411,7 +411,7 @@ namespace HeartopiaMod
         private const string AUTO_EAT_FOOD_KEY = "food_bluejam";
         // Default to the newly added "Bad Food" option (index 0)
         private int autoEatFoodType = 0;
-        private readonly string[] autoEatFoodOptions = {  "Bad Food", "Blue Jam", "Rasp Jam", "Mix Jam", "Bake Mushroom", "Salad", "Any Food"};
+        private readonly string[] autoEatFoodOptions = { "Bad Food", "Blue Jam", "Rasp Jam", "Mix Jam", "Bake Mushroom", "Salad", "Any Food" };
         private readonly string[] autoEatFoodKeys = { "food_badfood", "food_bluejam", "food_raspjam", "food_mixjam", "food_bakemushroom", "food_salad", "food_" };
         private bool autoEatFoodDropdownOpen = false;
         private const string BAG_BUTTON_PATH = "GameApp/startup_root(Clone)/XDUIRoot/Status/StatusPanel(Clone)/AniRoot@ani@queueanimation/right_layout@ani/top_right_layout@go@t/menu_bar@go/bag@go@btn@frame";
@@ -884,7 +884,7 @@ namespace HeartopiaMod
                 this.AddMenuNotification("Failed to load keybinds", new Color(1f, 0.4f, 0.4f));
             }
         }
-        
+
         private int GetJsonInt(string line, string key)
         {
             int startIdx = line.IndexOf(key);
@@ -1372,7 +1372,7 @@ namespace HeartopiaMod
                     HeartopiaComplete.OverridePlayerRotation = false;
                 }
             }
-            
+
             // Handle Noclip Flying
             if (this.noclipEnabled)
             {
@@ -1380,7 +1380,7 @@ namespace HeartopiaMod
                 if (player != null)
                 {
                     Vector3 moveDirection = Vector3.zero;
-                    
+
                     // Get camera for movement directions
                     Camera mainCamera = Camera.main;
                     if (mainCamera != null)
@@ -1388,13 +1388,13 @@ namespace HeartopiaMod
                         // Horizontal movement relative to camera (ignoring Y rotation for standard WASD)
                         Vector3 cameraForward = mainCamera.transform.forward;
                         Vector3 cameraRight = mainCamera.transform.right;
-                        
+
                         // Flatten to horizontal plane
                         cameraForward.y = 0;
                         cameraRight.y = 0;
                         cameraForward.Normalize();
                         cameraRight.Normalize();
-                        
+
                         if (Input.GetKey(KeyCode.W)) moveDirection += cameraForward;
                         if (Input.GetKey(KeyCode.S)) moveDirection -= cameraForward;
                         if (Input.GetKey(KeyCode.A)) moveDirection -= cameraRight;
@@ -1408,18 +1408,18 @@ namespace HeartopiaMod
                         if (Input.GetKey(KeyCode.A)) moveDirection += Vector3.left;
                         if (Input.GetKey(KeyCode.D)) moveDirection += Vector3.right;
                     }
-                    
+
                     // Vertical movement (Space/Ctrl)
                     if (Input.GetKey(KeyCode.Space)) moveDirection += Vector3.up;
                     if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) moveDirection -= Vector3.up;
-                    
+
                     // Calculate speed with boost
                     float currentSpeed = this.noclipSpeed;
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                     {
                         currentSpeed *= this.noclipBoostMultiplier;
                     }
-                    
+
                     // Normalize and apply speed
                     if (moveDirection != Vector3.zero)
                     {
@@ -1430,7 +1430,7 @@ namespace HeartopiaMod
                     }
                 }
             }
-            
+
             // Check for keybinds (Only if not currently rebinding and not just assigned)
             if (string.IsNullOrEmpty(this.keyBindingActive) && Time.unscaledTime - this.keyBindAssignedAt >= 0.2f)
             {
@@ -1689,14 +1689,14 @@ namespace HeartopiaMod
                 {
                     if (!this.isRepairing && !this.isAutoEating)
                     {
-                            MelonLogger.Msg("[AutoRepair] Durability toast requested StartRepair");
-                            // mark this start as an auto-repair request so StartRepair knows
-                            // to run the multi-use auto logic
-                            this.lastStartWasAutoRepair = true;
-                            this.StartRepair();
-                            // Pause resource farm teleports for configured seconds
-                            this.resourceRepairPauseUntil = Time.time + this.resourceAutoRepairPauseSeconds;
-                            this.AddMenuNotification($"Auto Repair triggered by durability notification — pausing farm for {this.resourceAutoRepairPauseSeconds:F0}s", new Color(0.45f, 1f, 0.55f));
+                        MelonLogger.Msg("[AutoRepair] Durability toast requested StartRepair");
+                        // mark this start as an auto-repair request so StartRepair knows
+                        // to run the multi-use auto logic
+                        this.lastStartWasAutoRepair = true;
+                        this.StartRepair();
+                        // Pause resource farm teleports for configured seconds
+                        this.resourceRepairPauseUntil = Time.time + this.resourceAutoRepairPauseSeconds;
+                        this.AddMenuNotification($"Auto Repair triggered by durability notification — pausing farm for {this.resourceAutoRepairPauseSeconds:F0}s", new Color(0.45f, 1f, 0.55f));
                     }
                 }
                 if (CheckForEnergyNotification())
@@ -2055,13 +2055,13 @@ namespace HeartopiaMod
 
             GUILayout.BeginArea(navListRect);
             GUILayout.BeginVertical();
-                this.DrawSidebarTabButton("Self", 0);
-                this.DrawSidebarTabButton("Resource Gathering", 2);
-                this.DrawSidebarTabButton("Features", 3);
-                this.DrawSidebarTabButton("Radar", 4);
-                this.DrawSidebarTabButton("Teleport", 5);
-                this.DrawSidebarTabButton("Items Selector", 6);
-                this.DrawSidebarTabButton("Settings", 7);
+            this.DrawSidebarTabButton("Self", 0);
+            this.DrawSidebarTabButton("Resource Gathering", 2);
+            this.DrawSidebarTabButton("Features", 3);
+            this.DrawSidebarTabButton("Radar", 4);
+            this.DrawSidebarTabButton("Teleport", 5);
+            this.DrawSidebarTabButton("Items Selector", 6);
+            this.DrawSidebarTabButton("Settings", 7);
             GUILayout.EndVertical();
             GUILayout.EndArea();
 
@@ -2492,7 +2492,7 @@ namespace HeartopiaMod
             if (this.selectedTab == 7) return "Settings";
             return "Unknown";
         }
-    
+
 
         private void DrawQuickStatusPanel(Rect panelRect)
         {
@@ -3218,7 +3218,7 @@ namespace HeartopiaMod
             Rect statusBoxRect = new Rect(20f, (float)num, 260f, 90f);
             GUI.Box(statusBoxRect, "");
             this.DrawCardOutline(statusBoxRect, 1f);
-            
+
             // Centered Header
             GUIStyle centerHeader = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
             GUI.Label(new Rect(20f, (float)num + 5f, 260f, 20f), "Status:", centerHeader);
@@ -3292,10 +3292,10 @@ namespace HeartopiaMod
             Rect rect = new Rect(20f, (float)num, 260f, 20f);
             GUI.Label(rect, $"Area Load Delay: {(int)this.areaLoadDelay}s");
             num += 22;
-                num += 8;
-                float prevAreaLoad = this.areaLoadDelay;
-                this.areaLoadDelay = Mathf.Round(this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 20f), this.areaLoadDelay, 1f, 10f));
-                if (this.areaLoadDelay != prevAreaLoad) { try { this.SaveKeybinds(false); } catch { } }
+            num += 8;
+            float prevAreaLoad = this.areaLoadDelay;
+            this.areaLoadDelay = Mathf.Round(this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 20f), this.areaLoadDelay, 1f, 10f));
+            if (this.areaLoadDelay != prevAreaLoad) { try { this.SaveKeybinds(false); } catch { } }
             num += 30;
 
             // --- AUTO STOP TIMER ---
@@ -3531,7 +3531,7 @@ namespace HeartopiaMod
             if (Math.Abs(this.resourceAutoRepairPauseSeconds - prevResourcePause) > 0.0001f) { try { this.SaveKeybinds(false); } catch { } }
             num += 30;
 
-            
+
 
             GUI.Label(new Rect(20f, (float)num, 200f, 20f), "Farm Rocks");
             this.farmRocks = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.farmRocks, "Farm Rocks");
@@ -3552,7 +3552,7 @@ namespace HeartopiaMod
                 this.ResetAllCooldowns();
             }
             num += 45;
-            
+
 
             GUI.Label(new Rect(20f, (float)num, 360f, 120f), "Chop & Mine flow:\n• Build list of available markers\n• Shuffle and teleport to markers\n• Simulate F key for configured duration\n• Mark resource collected and set cooldowns");
             return (float)num + 120f;
@@ -3761,7 +3761,7 @@ namespace HeartopiaMod
                     try { this.SaveKeybinds(false); } catch { }
                 }
                 num += 40;
-                
+
                 bool flag2 = this.DrawDangerActionButton(new Rect(20f, (float)num, 260f, 35f), "DISABLE ALL");
                 if (flag2)
                 {
@@ -4031,7 +4031,7 @@ namespace HeartopiaMod
                 if (Math.Abs(this.sculptIconClickInterval - prevSculpt) > 0.000001f) { try { this.SaveKeybinds(false); } catch { } }
                 num += 30;
 
-                
+
 
                 return (float)num;
             }
@@ -4444,7 +4444,11 @@ namespace HeartopiaMod
             // Select / Clear shortcuts
             if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 125f, 30f), "Select All Loots"))
             {
-                this.showMushroomRadar = true;
+                this.showOysterRadar = true;
+                this.showPennyBunRadar = true;
+                this.showShiitakeRadar = true;
+                this.showButtonRadar = true;
+                this.showTruffleRadar = true;
                 this.showFiddleheadRadar = true;
                 this.showTallMustardRadar = true;
                 this.showBurdockRadar = true;
@@ -4465,7 +4469,11 @@ namespace HeartopiaMod
             }
             if (this.DrawPrimaryActionButton(new Rect(155f, (float)num, 125f, 30f), "Clear All Loots"))
             {
-                this.showMushroomRadar = false;
+                this.showOysterRadar = false;
+                this.showPennyBunRadar = false;
+                this.showShiitakeRadar = false;
+                this.showButtonRadar = false;
+                this.showTruffleRadar = false;
                 this.showFiddleheadRadar = false;
                 this.showTallMustardRadar = false;
                 this.showBurdockRadar = false;
@@ -4486,17 +4494,55 @@ namespace HeartopiaMod
             }
             num += 45;
             // --- Berries & Mushrooms ---
-            GUI.Label(new Rect(20f, (float)num, 260f, 20f), "== Berries & Mushrooms ==");
+            GUI.Label(new Rect(20f, (float)num, 260f, 20f), "== Mushrooms ==");
             num += 25;
-            bool flagMush = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.showMushroomRadar, "Mushrooms");
-            bool flagMushChanged = flagMush != this.showMushroomRadar;
-            if (flagMushChanged)
+            bool flagOyster = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.showOysterRadar, "Oyster");
+            bool flagOysterChanged = flagOyster != this.showOysterRadar;
+            if (flagOysterChanged)
             {
-                this.showMushroomRadar = flagMush;
+                this.showOysterRadar = flagOyster;
                 this.CheckRadarAutoToggle();
                 if (this.isRadarActive) this.RunRadar();
             }
             num += 30;
+            bool flagPennyBun = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.showPennyBunRadar, "Penny Bun");
+            bool flagPennyBunChanged = flagPennyBun != this.showPennyBunRadar;
+            if (flagPennyBunChanged)
+            {
+                this.showPennyBunRadar = flagPennyBun;
+                this.CheckRadarAutoToggle();
+                if (this.isRadarActive) this.RunRadar();
+            }
+            num += 30;
+            bool flagShiitake = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.showShiitakeRadar, "Shiitake");
+            bool flagShiitakeChanged = flagShiitake != this.showShiitakeRadar;
+            if (flagShiitakeChanged)
+            {
+                this.showShiitakeRadar = flagShiitake;
+                this.CheckRadarAutoToggle();
+                if (this.isRadarActive) this.RunRadar();
+            }
+            num += 30;
+            bool flagButton = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.showButtonRadar, "Button");
+            bool flagButtonChanged = flagButton != this.showButtonRadar;
+            if (flagButtonChanged)
+            {
+                this.showButtonRadar = flagButton;
+                this.CheckRadarAutoToggle();
+                if (this.isRadarActive) this.RunRadar();
+            }
+            num += 30;
+            bool flagTruffle = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.showTruffleRadar, "Truffle");
+            bool flagTruffleChanged = flagTruffle != this.showTruffleRadar;
+            if (flagTruffleChanged)
+            {
+                this.showTruffleRadar = flagTruffle;
+                this.CheckRadarAutoToggle();
+                if (this.isRadarActive) this.RunRadar();
+            }
+            num += 30;
+            GUI.Label(new Rect(20f, (float)num, 260f, 20f), "== Berries ==");
+            num += 25;
             bool flagBlue = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 25f), this.showBlueberryRadar, "Blueberries");
             bool flagBlueChanged = flagBlue != this.showBlueberryRadar;
             if (flagBlueChanged)
@@ -6020,7 +6066,7 @@ namespace HeartopiaMod
             else
             {
                 List<int> notVisited = new List<int>();
-                for (int i=0;i<this.resourceMarkerPositions.Count;i++) if (!this.visitedResourceMarkerIndices.Contains(i)) notVisited.Add(i);
+                for (int i = 0; i < this.resourceMarkerPositions.Count; i++) if (!this.visitedResourceMarkerIndices.Contains(i)) notVisited.Add(i);
                 if (notVisited.Count == 0)
                 {
                     this.isResourceReturningToStart = true;
@@ -6063,7 +6109,7 @@ namespace HeartopiaMod
             if (this.farmRocks)
             {
                 // RockPositions assumed present in file (ported arrays)
-                for (int i=0;i<HeartopiaComplete.RockPositions.Length;i++)
+                for (int i = 0; i < HeartopiaComplete.RockPositions.Length; i++)
                 {
                     float until;
                     if (this.rockCooldowns.TryGetValue(i, out until) && until > time) continue;
@@ -6074,7 +6120,7 @@ namespace HeartopiaMod
             }
             if (this.farmOres)
             {
-                for (int j=0;j<HeartopiaComplete.OrePositions.Length;j++)
+                for (int j = 0; j < HeartopiaComplete.OrePositions.Length; j++)
                 {
                     float until;
                     if (this.oreCooldowns.TryGetValue(j, out until) && until > time) continue;
@@ -6085,7 +6131,7 @@ namespace HeartopiaMod
             }
             if (this.farmTrees)
             {
-                for (int k=0;k<HeartopiaComplete.TreePositions.Length;k++)
+                for (int k = 0; k < HeartopiaComplete.TreePositions.Length; k++)
                 {
                     float until;
                     if (this.treeCooldowns_res.TryGetValue(k, out until) && until > time) continue;
@@ -6096,7 +6142,7 @@ namespace HeartopiaMod
             }
             if (this.farmRareTrees)
             {
-                for (int l=0;l<HeartopiaComplete.RareTreePositions.Length;l++)
+                for (int l = 0; l < HeartopiaComplete.RareTreePositions.Length; l++)
                 {
                     float until;
                     if (this.rareTreeCooldowns_res.TryGetValue(l, out until) && until > time) continue;
@@ -6107,7 +6153,7 @@ namespace HeartopiaMod
             }
             if (this.farmAppleTrees)
             {
-                for (int m=0;m<HeartopiaComplete.AppleTreePositions.Length;m++)
+                for (int m = 0; m < HeartopiaComplete.AppleTreePositions.Length; m++)
                 {
                     float until;
                     if (this.appleTreeCooldowns_res.TryGetValue(m, out until) && until > time) continue;
@@ -6118,7 +6164,7 @@ namespace HeartopiaMod
             }
             if (this.farmOrangeTrees)
             {
-                for (int n=0;n<HeartopiaComplete.OrangeTreePositions.Length;n++)
+                for (int n = 0; n < HeartopiaComplete.OrangeTreePositions.Length; n++)
                 {
                     float until;
                     if (this.orangeTreeCooldowns_res.TryGetValue(n, out until) && until > time) continue;
@@ -6150,14 +6196,14 @@ namespace HeartopiaMod
             }
         }
 
-        public int GetResourceAvailableCount(Dictionary<int,float> cooldowns, int total)
+        public int GetResourceAvailableCount(Dictionary<int, float> cooldowns, int total)
         {
             int c = 0;
             float t = Time.time;
-            for (int i=0;i<total;i++)
+            for (int i = 0; i < total; i++)
             {
                 float until;
-                if (cooldowns.TryGetValue(i,out until) && until > t) continue;
+                if (cooldowns.TryGetValue(i, out until) && until > t) continue;
                 c++;
             }
             return c;
@@ -7368,8 +7414,13 @@ namespace HeartopiaMod
                         }
                         else
                         {
-                            bool flag11 = this.showMushroomRadar;
+                            bool flag11 = this.showOysterRadar || this.showPennyBunRadar || this.showShiitakeRadar || this.showButtonRadar || this.showTruffleRadar;
                             bool flag12 = this.showBlueberryRadar || this.showRaspberryRadar;
+                            bool flagOyster = this.showOysterRadar;
+                            bool flagButton = this.showButtonRadar;
+                            bool flagPennyBun = this.showPennyBunRadar;
+                            bool flagShiitake = this.showShiitakeRadar;
+                            bool flagTruffle = this.showTruffleRadar;
                             bool flagEventFiddlehead = this.showFiddleheadRadar;
                             bool flagEventTallMustard = this.showTallMustardRadar;
                             bool flagEventBurdock = this.showBurdockRadar;
@@ -7397,15 +7448,30 @@ namespace HeartopiaMod
                                     }
                                     else
                                     {
-                                        bool flag16 = farmLocation2.Type == "mushroom" && flag11;
-                                        if (flag16)
+                                        bool flag17 = farmLocation2.Type == "berry" && flag12;
+                                        if (flag17)
                                         {
                                             flag13 = true;
                                         }
                                         else
                                         {
-                                            bool flag17 = farmLocation2.Type == "berry" && flag12;
-                                            if (flag17)
+                                            if (farmLocation2.Type == "oyster" && flagOyster)
+                                            {
+                                                flag13 = true;
+                                            }
+                                            else if (farmLocation2.Type == "button" && flagButton)
+                                            {
+                                                flag13 = true;
+                                            }
+                                            else if (farmLocation2.Type == "pennybun" && flagPennyBun)
+                                            {
+                                                flag13 = true;
+                                            }
+                                            else if (farmLocation2.Type == "shiitake" && flagShiitake)
+                                            {
+                                                flag13 = true;
+                                            }
+                                            else if (farmLocation2.Type == "truffle" && flagTruffle)
                                             {
                                                 flag13 = true;
                                             }
@@ -7581,7 +7647,11 @@ namespace HeartopiaMod
                                 if (!flag8)
                                 {
                                     bool flag9 = false;
-                                    bool flag10 = (this.showMushroomRadar && (text.Contains("Mushroom") || text.Contains("Oyster") || text.Contains("Button") || text.Contains("Penny Bun") || text.Contains("Shiitake") || text.Contains("Truffle")))
+                                    bool flag10 = (this.showOysterRadar && text.Contains("Oyster"))
+                                        || (this.showButtonRadar && text.Contains("Button"))
+                                        || (this.showPennyBunRadar && text.Contains("Penny Bun"))
+                                        || (this.showShiitakeRadar && text.Contains("Shiitake"))
+                                        || (this.showTruffleRadar && text.Contains("Truffle"))
                                         || (this.showFiddleheadRadar && text.Contains("Fiddlehead"))
                                         || (this.showTallMustardRadar && text.Contains("Tall Mustard"))
                                         || (this.showBurdockRadar && text.Contains("Burdock"))
@@ -7954,7 +8024,8 @@ namespace HeartopiaMod
 
         private bool AnyRadarLootToggleEnabled()
         {
-            return this.showMushroomRadar || this.showFiddleheadRadar || this.showTallMustardRadar || this.showBurdockRadar || this.showMustardGreensRadar
+            return this.showOysterRadar || this.showPennyBunRadar || this.showShiitakeRadar || this.showButtonRadar || this.showTruffleRadar
+                || this.showFiddleheadRadar || this.showTallMustardRadar || this.showBurdockRadar || this.showMustardGreensRadar
                 || this.showBlueberryRadar || this.showRaspberryRadar || this.showStoneRadar || this.showOreRadar
                 || this.showTreeRadar || this.showRareTreeRadar || this.showAppleTreeRadar || this.showOrangeTreeRadar
                 || this.showBubbleRadar || this.showInsectRadar || this.showFishShadowRadar;
@@ -7962,9 +8033,29 @@ namespace HeartopiaMod
 
         private bool ShouldShowForageMesh(string forageText)
         {
-            if (forageText.Contains("pleurotus") || forageText.Contains("tricholoma") || forageText.Contains("boletus") || forageText.Contains("shiitake") || forageText.Contains("truffle"))
+            if (forageText.Contains("penny") || forageText.Contains("penny bun") || forageText.Contains("boletus"))
             {
-                return this.showMushroomRadar;
+                return this.showPennyBunRadar;
+            }
+
+            if (forageText.Contains("button") || forageText.Contains("tricholoma"))
+            {
+                return this.showButtonRadar;
+            }
+
+            if (forageText.Contains("oyster") || forageText.Contains("pleurotus"))
+            {
+                return this.showOysterRadar;
+            }
+
+            if (forageText.Contains("shiitake"))
+            {
+                return this.showShiitakeRadar;
+            }
+
+            if (forageText.Contains("truffle"))
+            {
+                return this.showTruffleRadar;
             }
 
             if (forageText.Contains("fiddlehead") || forageText.Contains("fiddle") || forageText.Contains("fern") || forageText.Contains("pterid") || forageText.Contains("bracken"))
@@ -7977,17 +8068,18 @@ namespace HeartopiaMod
                 return this.showBurdockRadar;
             }
 
-            if (forageText.Contains("shepherdspurse") || ((forageText.Contains("mustard") && forageText.Contains("green"))) || forageText.Contains("mustard greens") || forageText.Contains("mustardgreens") || forageText.Contains("mustard_green") || forageText.Contains("mustardgreen") || forageText.Contains("greens"))
+            if (forageText.Contains("shepherdspurse") || forageText.Contains("mustard greens") || forageText.Contains("mustardgreens") || forageText.Contains("mustard_green") || forageText.Contains("mustardgreen") || forageText.Contains("greens"))
             {
                 return this.showMustardGreensRadar;
             }
 
-            if (forageText.Contains("tall mustard") || forageText.Contains("tallmustard") || forageText.Contains("mustard"))
+            if (forageText.Contains("tall mustard") || forageText.Contains("tallmustard"))
             {
                 return this.showTallMustardRadar;
             }
 
-            return this.showMushroomRadar;
+            return false;
+            // return this.showMushroomRadar;
         }
 
         // Token: 0x06000018 RID: 24 RVA: 0x00004964 File Offset: 0x00002B64
@@ -8022,7 +8114,7 @@ namespace HeartopiaMod
         private void ToggleAutoFarm()
         {
             bool flag = this.AnyRadarLootToggleEnabled();
-            
+
             // Fix: Check if Radar is active before enabling Auto Farm
             if (!this.autoFarmActive)
             {
@@ -8479,7 +8571,7 @@ namespace HeartopiaMod
                 }
             }
             bool flag34 = object2 != null;
-            if (this.showMushroomRadar || this.showFiddleheadRadar || this.showTallMustardRadar || this.showBurdockRadar || this.showMustardGreensRadar)
+            if (this.showOysterRadar || this.showPennyBunRadar || this.showShiitakeRadar || this.showButtonRadar || this.showTruffleRadar || this.showFiddleheadRadar || this.showTallMustardRadar || this.showBurdockRadar || this.showMustardGreensRadar)
             {
                 if (flag34)
                 {
@@ -8652,108 +8744,108 @@ namespace HeartopiaMod
                             }
                             else
                             {
-                            bool flag35 = meshName == "fishshadow";
-                            if (flag35)
-                            {
-                                text2 = "Fish Shadow";
-                                icon = "🐟";
-                                endColor = new Color(0.2f, 0.6f, 1f); // Light blue
-                                bgColor = new Color(0.05f, 0.2f, 0.5f, 0.85f);
-                            }
-                            else
-                            {
-                                bool flagRockType = meshName == "stone" || meshName == "stone_cooldown";
-                                if (flagRockType)
+                                bool flag35 = meshName == "fishshadow";
+                                if (flag35)
                                 {
-                                    text2 = "Stone";
-                                    icon = "◯";
-                                    endColor = new Color(0.7f, 0.7f, 0.7f);
-                                    bgColor = new Color(0.2f, 0.2f, 0.2f, 0.85f);
-                                }
-                                bool flagOreType = meshName == "ore" || meshName == "ore_cooldown";
-                                if (flagOreType)
-                                {
-                                    text2 = "Ore";
-                                    icon = "◆";
-                                    endColor = new Color(0.8f, 0.6f, 0.4f); // brownish
-                                    bgColor = new Color(0.25f, 0.18f, 0.1f, 0.85f);
-                                }
-                                bool flag6 = text.Contains("pleurotus");
-                                if (flag6)
-                                {
-                                    text2 = "Oyster";
-                                    icon = "▲";
-                                    endColor = new Color(0.5f, 1f, 1f); // Light cyan
-                                    bgColor = new Color(0.1f, 0.4f, 0.4f, 0.85f);
+                                    text2 = "Fish Shadow";
+                                    icon = "🐟";
+                                    endColor = new Color(0.2f, 0.6f, 1f); // Light blue
+                                    bgColor = new Color(0.05f, 0.2f, 0.5f, 0.85f);
                                 }
                                 else
                                 {
-                                    bool flag7 = text.Contains("tricholoma");
-                                    if (flag7)
+                                    bool flagRockType = meshName == "stone" || meshName == "stone_cooldown";
+                                    if (flagRockType)
                                     {
-                                        text2 = "Button";
+                                        text2 = "Stone";
+                                        icon = "◯";
+                                        endColor = new Color(0.7f, 0.7f, 0.7f);
+                                        bgColor = new Color(0.2f, 0.2f, 0.2f, 0.85f);
+                                    }
+                                    bool flagOreType = meshName == "ore" || meshName == "ore_cooldown";
+                                    if (flagOreType)
+                                    {
+                                        text2 = "Ore";
+                                        icon = "◆";
+                                        endColor = new Color(0.8f, 0.6f, 0.4f); // brownish
+                                        bgColor = new Color(0.25f, 0.18f, 0.1f, 0.85f);
+                                    }
+                                    bool flag6 = text.Contains("pleurotus");
+                                    if (flag6)
+                                    {
+                                        text2 = "Oyster";
                                         icon = "▲";
-                                        endColor = new Color(0.6f, 1f, 0.6f); // Light green
-                                        bgColor = new Color(0.15f, 0.4f, 0.15f, 0.85f);
+                                        endColor = new Color(0.5f, 1f, 1f); // Light cyan
+                                        bgColor = new Color(0.1f, 0.4f, 0.4f, 0.85f);
                                     }
                                     else
                                     {
-                                        bool flag8 = text.Contains("boletus");
-                                        if (flag8)
+                                        bool flag7 = text.Contains("tricholoma");
+                                        if (flag7)
                                         {
-                                            text2 = "Penny Bun";
+                                            text2 = "Button";
                                             icon = "▲";
-                                            endColor = new Color(0.9f, 0.7f, 1f); // Light purple
-                                            bgColor = new Color(0.35f, 0.2f, 0.5f, 0.85f);
+                                            endColor = new Color(0.6f, 1f, 0.6f); // Light green
+                                            bgColor = new Color(0.15f, 0.4f, 0.15f, 0.85f);
                                         }
                                         else
                                         {
-                                            bool flag9 = text.Contains("shiitake");
-                                            if (flag9)
+                                            bool flag8 = text.Contains("boletus");
+                                            if (flag8)
                                             {
-                                                text2 = "Shiitake";
+                                                text2 = "Penny Bun";
                                                 icon = "▲";
-                                                endColor = new Color(1f, 0.7f, 0.5f); // Light orange-brown
-                                                bgColor = new Color(0.5f, 0.25f, 0.1f, 0.85f);
+                                                endColor = new Color(0.9f, 0.7f, 1f); // Light purple
+                                                bgColor = new Color(0.35f, 0.2f, 0.5f, 0.85f);
                                             }
                                             else
                                             {
-                                                bool flag10 = text.Contains("truffle");
-                                                if (flag10)
+                                                bool flag9 = text.Contains("shiitake");
+                                                if (flag9)
                                                 {
-                                                    text2 = "Truffle";
-                                                    icon = "◆";
-                                                    endColor = new Color(1f, 1f, 0.5f); // Light yellow
-                                                    bgColor = new Color(0.5f, 0.5f, 0.1f, 0.85f);
+                                                    text2 = "Shiitake";
+                                                    icon = "▲";
+                                                    endColor = new Color(1f, 0.7f, 0.5f); // Light orange-brown
+                                                    bgColor = new Color(0.5f, 0.25f, 0.1f, 0.85f);
                                                 }
-                                                else if (text.Contains("fiddlehead") || text.Contains("fiddle") || text.Contains("fern") || text.Contains("pterid") || text.Contains("bracken"))
+                                                else
                                                 {
-                                                    text2 = "Fiddlehead";
-                                                    icon = "🌿";
-                                                    endColor = new Color(0.6f, 0.95f, 0.6f);
-                                                    bgColor = new Color(0.15f, 0.45f, 0.15f, 0.85f);
-                                                }
-                                                else if (text.Contains("burdock"))
-                                                {
-                                                    text2 = "Burdock";
-                                                    icon = "◆";
-                                                    endColor = new Color(0.86f, 0.72f, 0.48f);
-                                                    bgColor = new Color(0.38f, 0.26f, 0.12f, 0.85f);
-                                                }
-                                                else if (text.Contains("shepherdspurse") || (text.Contains("mustard") && text.Contains("green")) || text.Contains("mustard greens") || text.Contains("mustardgreens") || text.Contains("mustard_green") || text.Contains("mustardgreen") || text.Contains("greens"))
-                                                {
-                                                    text2 = "Mustard Greens";
-                                                    icon = "🍃";
-                                                    endColor = new Color(0.58f, 0.95f, 0.52f);
-                                                    bgColor = new Color(0.14f, 0.42f, 0.14f, 0.85f);
-                                                }
-                                                else if (text.Contains("tall mustard") || text.Contains("tallmustard") || text.Contains("mustard"))
-                                                {
-                                                    text2 = "Tall Mustard";
-                                                    icon = "🍃";
-                                                    endColor = new Color(0.7f, 1f, 0.5f);
-                                                    bgColor = new Color(0.2f, 0.45f, 0.12f, 0.85f);
-                                                }
+                                                    bool flag10 = text.Contains("truffle");
+                                                    if (flag10)
+                                                    {
+                                                        text2 = "Truffle";
+                                                        icon = "◆";
+                                                        endColor = new Color(1f, 1f, 0.5f); // Light yellow
+                                                        bgColor = new Color(0.5f, 0.5f, 0.1f, 0.85f);
+                                                    }
+                                                    else if (text.Contains("fiddlehead") || text.Contains("fiddle") || text.Contains("fern") || text.Contains("pterid") || text.Contains("bracken"))
+                                                    {
+                                                        text2 = "Fiddlehead";
+                                                        icon = "🌿";
+                                                        endColor = new Color(0.6f, 0.95f, 0.6f);
+                                                        bgColor = new Color(0.15f, 0.45f, 0.15f, 0.85f);
+                                                    }
+                                                    else if (text.Contains("burdock"))
+                                                    {
+                                                        text2 = "Burdock";
+                                                        icon = "◆";
+                                                        endColor = new Color(0.86f, 0.72f, 0.48f);
+                                                        bgColor = new Color(0.38f, 0.26f, 0.12f, 0.85f);
+                                                    }
+                                                    else if (text.Contains("shepherdspurse") || (text.Contains("mustard") && text.Contains("green")) || text.Contains("mustard greens") || text.Contains("mustardgreens") || text.Contains("mustard_green") || text.Contains("mustardgreen") || text.Contains("greens"))
+                                                    {
+                                                        text2 = "Mustard Greens";
+                                                        icon = "🍃";
+                                                        endColor = new Color(0.58f, 0.95f, 0.52f);
+                                                        bgColor = new Color(0.14f, 0.42f, 0.14f, 0.85f);
+                                                    }
+                                                    else if (text.Contains("tall mustard") || text.Contains("tallmustard") || (text.Contains("tall") && text.Contains("mustard")))
+                                                    {
+                                                        text2 = "Tall Mustard";
+                                                        icon = "🍃";
+                                                        endColor = new Color(0.7f, 1f, 0.5f);
+                                                        bgColor = new Color(0.2f, 0.45f, 0.12f, 0.85f);
+                                                    }
                                                 }
                                             }
                                         }
@@ -8853,7 +8945,7 @@ namespace HeartopiaMod
             gameObject3.transform.localScale = new Vector3(3.2f, 1.1f, 1f); // Slightly larger
             gameObject3.GetComponent<MeshRenderer>().material = bg;
             gameObject3.GetComponent<MeshRenderer>().material.color = bgColor; // Use colored background
-            
+
             // Add subtle border effect
             GameObject border = GameObject.CreatePrimitive((PrimitiveType)5);
             Object.Destroy(border.GetComponent<MeshCollider>());
@@ -8862,7 +8954,7 @@ namespace HeartopiaMod
             border.transform.localScale = new Vector3(3.3f, 1.2f, 1f);
             border.GetComponent<MeshRenderer>().material = bg;
             border.GetComponent<MeshRenderer>().material.color = new Color(endColor.r * 0.8f, endColor.g * 0.8f, endColor.b * 0.8f, 0.6f);
-            
+
             GameObject gameObject4 = new GameObject("Text");
             TextMesh textMesh = gameObject4.AddComponent<TextMesh>();
             gameObject4.transform.SetParent(gameObject2.transform);
@@ -9779,7 +9871,7 @@ namespace HeartopiaMod
                         PostMessage(hwnd, 257U, new IntPtr(70), lParamUp);
                     }
                 }
-                catch {}
+                catch { }
 
                 string[] paths = new string[] {
                     "GameApp/startup_root(Clone)/XDUIRoot/Status/StatusPanel(Clone)/AniRoot@ani@queueanimation/right_layout@ani/middle_right_layout@go/skill_bar@w@go/skill_bar@go/main_joy@go@w/Joy@ani",
@@ -9800,7 +9892,7 @@ namespace HeartopiaMod
                     }
                 }
             }
-            catch {}
+            catch { }
         }
 
         private void DirectClickGameButton(GameObject buttonObj)
@@ -9830,10 +9922,10 @@ namespace HeartopiaMod
                 Button b = buttonObj.GetComponent<Button>();
                 if (b != null && b.interactable)
                 {
-                    try { b.onClick.Invoke(); } catch {}
+                    try { b.onClick.Invoke(); } catch { }
                 }
             }
-            catch {}
+            catch { }
         }
 
         private void SendLeftClickMessage()
@@ -10449,7 +10541,9 @@ namespace HeartopiaMod
                             if (!tr.name.Contains(pref)) continue;
                             // find a Button or Image child to click
                             var btn = tr.GetComponentInChildren<Button>(true);
-                            if (btn != null && btn.interactable) { btn.onClick.Invoke(); MelonLogger.Msg($"[AutoBuy] Clicked preferred icon '{tr.name}'");
+                            if (btn != null && btn.interactable)
+                            {
+                                btn.onClick.Invoke(); MelonLogger.Msg($"[AutoBuy] Clicked preferred icon '{tr.name}'");
                                 // verify dialogue opened
                                 var dlg = GameObject.Find("GameApp/startup_root(Clone)/XDUIRoot/Scene/DialoguePanel(Clone)");
                                 if (dlg != null && dlg.activeInHierarchy) return true;
@@ -10744,7 +10838,7 @@ namespace HeartopiaMod
                         for (int s = 0; s < shop.transform.childCount; s++)
                         {
                             var ch = shop.transform.GetChild(s);
-                            MelonLogger.Msg($"[AutoBuy] Shop child[{s}] = { (ch != null ? ch.name : "<null>") }");
+                            MelonLogger.Msg($"[AutoBuy] Shop child[{s}] = {(ch != null ? ch.name : "<null>")}");
                         }
                     }
                     catch { }
@@ -11744,7 +11838,7 @@ namespace HeartopiaMod
                         autoEatStep = 1;
                         autoEatScrollAttempts = 0;
                         autoEatStepTimer = Time.time;
-                        MelonLogger.Msg($"[Auto Eat] Energy still low ({GetCurrentEnergy()*100:F0}%), eating another {this.autoEatFoodOptions[this.autoEatFoodType]}... (attempt {autoEatAttempts}/{this.maxAutoEatAttempts})");
+                        MelonLogger.Msg($"[Auto Eat] Energy still low ({GetCurrentEnergy() * 100:F0}%), eating another {this.autoEatFoodOptions[this.autoEatFoodType]}... (attempt {autoEatAttempts}/{this.maxAutoEatAttempts})");
                     }
                     else
                     {
@@ -11758,7 +11852,7 @@ namespace HeartopiaMod
                         }
                         else
                         {
-                            MelonLogger.Msg($"[Auto Eat] Stopped after {autoEatAttempts} attempts - energy at {GetCurrentEnergy()*100:F0}%");
+                            MelonLogger.Msg($"[Auto Eat] Stopped after {autoEatAttempts} attempts - energy at {GetCurrentEnergy() * 100:F0}%");
                         }
                     }
                     break;
@@ -11930,11 +12024,11 @@ namespace HeartopiaMod
             GUIStyle headerStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold, fontSize = 14 };
             GUIStyle centeredGrayLabel = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
             centeredGrayLabel.normal.textColor = Color.white;
-            
+
             // --- HEADER ---
             GUI.Label(new Rect(20f, (float)num, 260f, 25f), "INVENTORY BULK MANAGER", headerStyle);
             num += 30;
-            
+
             // Refresh Button
             bool flagRefresh = this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), "REFRESH & SCAN");
             if (flagRefresh)
@@ -11942,19 +12036,19 @@ namespace HeartopiaMod
                 this.RefreshBulkSelectorCache();
             }
             num += 40;
-            
+
             // --- ITEM LIST ---
             GUI.Label(new Rect(20f, (float)num, 260f, 20f), $"Detected Items: {HeartopiaComplete.discoveredItems.Count}");
             num += 20;
-            
+
             // List Background Box
             GUI.Box(new Rect(20f, (float)num, 260f, 200f), "");
-            
+
             // Scroll View
             Rect scrollViewRect = new Rect(22f, (float)num + 2f, 256f, 196f);
             Rect scrollContentRect = new Rect(0f, 0f, 235f, Mathf.Max(200f, HeartopiaComplete.discoveredItems.Count * 28f));
             this.bulkSelectorScrollPos = GUI.BeginScrollView(scrollViewRect, this.bulkSelectorScrollPos, scrollContentRect);
-            
+
             int itemY = 0;
             if (HeartopiaComplete.discoveredItems.Count == 0)
             {
@@ -11966,50 +12060,50 @@ namespace HeartopiaMod
                 {
                     bool isSelected = (this.selectedBulkItemID == itemName);
                     string displayName = itemName.Replace("ui_item_normal_p_", "").Replace("ui_item_normal_", "").ToUpper();
-                    
+
                     string prefix = isSelected ? "▶ " : "  ";
                     if (GUI.Button(new Rect(2f, (float)itemY, 235f, 26f), prefix + displayName, isSelected ? (this.themeSidebarButtonActiveStyle ?? GUI.skin.button) : (this.themeSidebarButtonStyle ?? GUI.skin.button)))
                     {
                         this.selectedBulkItemID = itemName;
                     }
-                    
+
                     itemY += 28;
                 }
             }
             GUI.EndScrollView();
             num += 205;
-            
+
             // --- ACTION PANEL ---
             bool hasSelection = !string.IsNullOrEmpty(this.selectedBulkItemID);
-            
+
             // Status Box
             GUI.Box(new Rect(20f, (float)num, 260f, 160f), "");
             int panelY = num + 10;
-            
+
             if (hasSelection)
             {
-                int slotCount = HeartopiaComplete.slotCache.ContainsKey(this.selectedBulkItemID) ? 
+                int slotCount = HeartopiaComplete.slotCache.ContainsKey(this.selectedBulkItemID) ?
                     HeartopiaComplete.slotCache[this.selectedBulkItemID].Count : 0;
-                
+
                 string displayName = this.selectedBulkItemID.Replace("ui_item_normal_p_", "").Replace("ui_item_normal_", "").ToUpper();
-                
+
                 GUI.Label(new Rect(30f, (float)panelY, 240f, 20f), "SELECTED ITEM:");
                 panelY += 18;
-                
+
                 GUIStyle selectionStyle = new GUIStyle(GUI.skin.label) { fontStyle = FontStyle.Bold };
                 selectionStyle.normal.textColor = Color.cyan;
                 GUI.Label(new Rect(30f, (float)panelY, 240f, 20f), displayName, selectionStyle);
                 panelY += 22;
-                
+
                 GUI.Label(new Rect(30f, (float)panelY, 240f, 20f), $"Available Stacks: {slotCount}");
                 panelY += 25;
-                
+
                 if (this.DrawPrimaryActionButton(new Rect(30f, (float)panelY, 240f, 30f), "QUICK SELECT ALL"))
                 {
                     this.ExecuteBulkSelection();
                 }
                 panelY += 35;
-                
+
                 if (this.DrawPrimaryActionButton(new Rect(30f, (float)panelY, 240f, 30f), "QUICK SELL ALL"))
                 {
                     this.ExecuteBulkSell();
@@ -12019,16 +12113,16 @@ namespace HeartopiaMod
             {
                 GUI.Label(new Rect(20f, (float)num, 260f, 160f), "Select an item from the list\nto enable bulk actions", centeredGrayLabel);
             }
-            
+
             num += 165;
-            
+
             // Footer
             GUIStyle footerStyle = new GUIStyle(GUI.skin.label) { fontSize = 10, alignment = TextAnchor.MiddleCenter };
             footerStyle.normal.textColor = Color.white;
             GUI.Label(new Rect(20f, (float)num, 260f, 20f), "Auto-detects items when viewing bag", footerStyle);
             return (float)num + 40f;
         }
-        
+
         // Token: 0x06000026C - Execute Bulk Selection
         private void ExecuteBulkSelection()
         {
@@ -12037,14 +12131,14 @@ namespace HeartopiaMod
                 MelonLogger.Msg("[BULK SELECTOR] No slots found for selected item!");
                 return;
             }
-            
+
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
             int clickedSlots = 0;
-            
+
             foreach (Transform slot in HeartopiaComplete.slotCache[this.selectedBulkItemID])
             {
                 if (slot == null || !slot.gameObject.activeInHierarchy) continue;
-                
+
                 Transform addBtn = slot.Find("Root/add@w");
                 if (addBtn != null && addBtn.gameObject.activeInHierarchy)
                 {
@@ -12055,43 +12149,43 @@ namespace HeartopiaMod
                     clickedSlots++;
                 }
             }
-            
+
             string displayName = this.selectedBulkItemID.Replace("ui_item_normal_p_", "").Replace("ui_item_normal_", "");
             MelonLogger.Msg($"[BULK SELECTOR] Executed 200 clicks on {clickedSlots} slots for {displayName}");
         }
-        
+
         // Token: 0x06000026D - Execute Bulk Sell
         private void ExecuteBulkSell()
         {
             // Find the sell confirm button in the ItemSellPanel
             GameObject sellButton = GameObject.Find("GameApp/startup_root(Clone)/XDUIRoot/Popup/ItemSellPanel(Clone)/commonSidePicker@w/bagPanel@go/bottom@go/confirmButton@btn");
-            
+
             if (sellButton == null || !sellButton.activeInHierarchy)
             {
                 MelonLogger.Msg("[BULK SELL] Sell panel not found or not active! Make sure sell panel is open.");
                 return;
             }
-            
+
             PointerEventData pointerData = new PointerEventData(EventSystem.current);
-            
+
             // Click the sell button
             ExecuteEvents.Execute(sellButton, pointerData, ExecuteEvents.pointerClickHandler);
-            
+
             string displayName = this.selectedBulkItemID.Replace("ui_item_normal_p_", "").Replace("ui_item_normal_", "");
             MelonLogger.Msg($"[BULK SELL] Clicked sell button for {displayName}");
         }
-        
+
         // Token: 0x06000026E - Refresh Bulk Selector Cache
         private void RefreshBulkSelectorCache()
         {
             HeartopiaComplete.discoveredItems.Clear();
             HeartopiaComplete.slotCache.Clear();
             this.selectedBulkItemID = "";
-            
+
             // Find all currently active Image components and check for inventory items
             UnityEngine.UI.Image[] allImages = UnityEngine.Object.FindObjectsOfType<UnityEngine.UI.Image>(true);
             int foundItems = 0;
-            
+
             foreach (UnityEngine.UI.Image img in allImages)
             {
                 if (img.sprite != null && img.sprite.name.Contains("ui_item_normal"))
@@ -12102,7 +12196,7 @@ namespace HeartopiaMod
                         HeartopiaComplete.discoveredItems.Add(spriteName);
                         foundItems++;
                     }
-                    
+
                     // Find the slot transform (same logic as the Harmony patch)
                     Transform slot = img.transform.parent?.parent;
                     if (slot != null)
@@ -12118,7 +12212,7 @@ namespace HeartopiaMod
                     }
                 }
             }
-            
+
             MelonLogger.Msg($"[BULK SELECTOR] Cache refreshed! Found {foundItems} unique items from {HeartopiaComplete.discoveredItems.Count} total detections.");
         }
 
@@ -12135,7 +12229,7 @@ namespace HeartopiaMod
             }
 
             int num = startY;
-            
+
             // Header - At top of main content card
             GUIStyle headerStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold, fontSize = 14 };
             GUI.Label(new Rect(113f, (float)num, 260f, 25f), "KEYBIND SETTINGS", headerStyle);
@@ -12144,12 +12238,12 @@ namespace HeartopiaMod
             // Rebinding Mode
             if (!string.IsNullOrEmpty(this.keyBindingActive))
             {
-            GUI.Box(new Rect(20f, (float)num, 260f, 60f), "");
-            GUIStyle centerStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold };
-            GUI.Label(new Rect(20f, (float)num + 10f, 260f, 20f), "PRESS ANY KEY FOR:", centerStyle);
-            centerStyle.normal.textColor = Color.yellow;
-            GUI.Label(new Rect(20f, (float)num + 30f, 260f, 20f), this.keyBindingActive.ToUpper(), centerStyle);
-                
+                GUI.Box(new Rect(20f, (float)num, 260f, 60f), "");
+                GUIStyle centerStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold };
+                GUI.Label(new Rect(20f, (float)num + 10f, 260f, 20f), "PRESS ANY KEY FOR:", centerStyle);
+                centerStyle.normal.textColor = Color.yellow;
+                GUI.Label(new Rect(20f, (float)num + 30f, 260f, 20f), this.keyBindingActive.ToUpper(), centerStyle);
+
                 if (GUI.Button(new Rect(20f, (float)num + 60f, 260f, 30f), "CANCEL"))
                 {
                     this.keyBindingActive = "";
@@ -12316,7 +12410,7 @@ namespace HeartopiaMod
                     this.AddMenuNotification("Notifications enabled", new Color(0.55f, 0.88f, 1f));
                 }
             }
-            
+
             num += 26;
             bool newAutoClickStart = this.DrawSwitchToggle(new Rect(20f, (float)num, 260f, 24f), this.autoClickStartEnabled, "Auto Start on Lobby");
             if (newAutoClickStart != this.autoClickStartEnabled)
@@ -12671,7 +12765,7 @@ namespace HeartopiaMod
                 this.noclipSpeed = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 20f), this.noclipSpeed, 5f, 50f);
                 if (Math.Abs(this.noclipSpeed - prevNoclipSpeed) > 0.0001f)
                 {
-                    try { this.SaveKeybinds(false); } catch {}
+                    try { this.SaveKeybinds(false); } catch { }
                 }
                 num += 30;
 
@@ -12681,7 +12775,7 @@ namespace HeartopiaMod
                 this.noclipBoostMultiplier = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 20f), this.noclipBoostMultiplier, 1f, 5f);
                 if (Math.Abs(this.noclipBoostMultiplier - prevNoclipBoost) > 0.0001f)
                 {
-                    try { this.SaveKeybinds(false); } catch {}
+                    try { this.SaveKeybinds(false); } catch { }
                 }
                 num += 30;
 
@@ -13112,11 +13206,11 @@ namespace HeartopiaMod
         // Token: 0x04000011 RID: 17
         private List<HeartopiaComplete.FarmLocation> farmLocations = new List<HeartopiaComplete.FarmLocation>
         {
-            new HeartopiaComplete.FarmLocation("Black Truffle Spawn", new Vector3(272.1f, 12.7f, 98.2f), "mushroom"),
-            new HeartopiaComplete.FarmLocation("Oyster Spawn", new Vector3(-139.8f, 21.3f, 205.2f), "mushroom"),
-            new HeartopiaComplete.FarmLocation("Penny Bun Spawn", new Vector3(176.9f, 25.9f, 59.8f), "mushroom"),
-            new HeartopiaComplete.FarmLocation("ShiiTake Spawn", new Vector3(57f, 18.3f, -131.5f), "mushroom"),
-            new HeartopiaComplete.FarmLocation("Button Spawn", new Vector3(-156.3f, 18.8f, -115.2f), "mushroom"),
+            new HeartopiaComplete.FarmLocation("Black Truffle Spawn", new Vector3(272.1f, 12.7f, 98.2f), "truffle"),
+            new HeartopiaComplete.FarmLocation("Oyster Spawn", new Vector3(-139.8f, 21.3f, 205.2f), "oyster"),
+            new HeartopiaComplete.FarmLocation("Penny Bun Spawn", new Vector3(176.9f, 25.9f, 59.8f), "pennybun"),
+            new HeartopiaComplete.FarmLocation("ShiiTake Spawn", new Vector3(57f, 18.3f, -131.5f), "shiitake"),
+            new HeartopiaComplete.FarmLocation("Button Spawn", new Vector3(-156.3f, 18.8f, -115.2f), "button"),
             new HeartopiaComplete.FarmLocation("Fiddlehead Event Area", new Vector3(229.782f, 11.404f, 48.837f), "event_fiddlehead"),
             new HeartopiaComplete.FarmLocation("Tall Mustard Event Area", new Vector3(-125.213f, 11.729f, 290.797f), "event_tall_mustard"),
             new HeartopiaComplete.FarmLocation("Mustard Greens Event Area", new Vector3(-58.984f, 11.035f, -155.413f), "event_mustard_greens"),
@@ -13698,7 +13792,7 @@ namespace HeartopiaMod
         public static bool SimulateFKeyHeld = false;
         public static bool SimulateFKeyDown = false;
         public static bool SimulateFKeyUp = false;
-        
+
         // Noclip/Flying Variables
         private bool noclipEnabled = false;
         private float noclipSpeed = 10f;
@@ -13769,7 +13863,11 @@ namespace HeartopiaMod
         public bool isRadarActive = false;
 
         // Token: 0x0400002A RID: 42
-        private bool showMushroomRadar = false;
+        private bool showOysterRadar = false;
+        private bool showPennyBunRadar = false;
+        private bool showShiitakeRadar = false;
+        private bool showButtonRadar = false;
+        private bool showTruffleRadar = false;
         private bool showFiddleheadRadar = false;
         private bool showTallMustardRadar = false;
         private bool showBurdockRadar = false;
@@ -13797,7 +13895,7 @@ namespace HeartopiaMod
         public bool showFishShadowRadar = false;
         // Draw radar objects as a GUI overlay (like meteors) regardless of world distance
         private bool showRadarGuiOverlay = false;
-        
+
         // Token: 0x04000030 RID: 48
         private bool showTreeRadar = false;
         private bool showRareTreeRadar = false;
@@ -14120,17 +14218,17 @@ namespace HeartopiaMod
                     {
                         if (line.Contains("\"name\":"))
                         {
-                            try 
+                            try
                             {
                                 // Simple efficient parsing for flat structure
                                 string name = GetJsonString(line, "\"name\":");
                                 float x = GetJsonFloat(line, "\"x\":");
                                 float y = GetJsonFloat(line, "\"y\":");
                                 float z = GetJsonFloat(line, "\"z\":");
-                                
+
                                 this.customTeleportList.Add(new CustomTeleportEntry { name = name, position = new Vector3(x, y, z) });
-                            } 
-                            catch {}
+                            }
+                            catch { }
                         }
                     }
                     MelonLogger.Msg($"Loaded {this.customTeleportList.Count} custom teleports.");
@@ -14147,15 +14245,15 @@ namespace HeartopiaMod
             int startIdx = line.IndexOf(key);
             if (startIdx == -1) return "Unknown";
             startIdx += key.Length;
-            
+
             // Find opening quote
             int quoteStart = line.IndexOf("\"", startIdx);
             if (quoteStart == -1) return "Unknown";
-            
+
             // Find closing quote
             int quoteEnd = line.IndexOf("\"", quoteStart + 1);
             if (quoteEnd == -1) return "Unknown";
-            
+
             return line.Substring(quoteStart + 1, quoteEnd - quoteStart - 1);
         }
 
@@ -14164,14 +14262,14 @@ namespace HeartopiaMod
             int startIdx = line.IndexOf(key);
             if (startIdx == -1) return 0f;
             startIdx += key.Length;
-            
+
             // Find value start (skip spaces)
             while (startIdx < line.Length && (line[startIdx] == ' ' || line[startIdx] == ':')) startIdx++;
-            
+
             // Find value end (comma or brace)
             int endIdx = startIdx;
             while (endIdx < line.Length && line[endIdx] != ',' && line[endIdx] != '}') endIdx++;
-            
+
             string valStr = line.Substring(startIdx, endIdx - startIdx).Trim();
             float result;
             if (float.TryParse(valStr, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out result))
