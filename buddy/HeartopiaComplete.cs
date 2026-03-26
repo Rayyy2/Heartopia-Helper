@@ -13197,10 +13197,6 @@ namespace HeartopiaMod
                 new Vector3(-12f, 31.6f, 43.2f)
             },
             {
-                "Massimo [EVENT] (Cooking)",
-                new Vector3(-55.6f, 10.7f, 254.2f)
-            },
-            {
                 "Vanya (Fishing)",
                 new Vector3(26.5f, 31.8f, 36.5f)
             },
@@ -13211,10 +13207,6 @@ namespace HeartopiaMod
             {
                 "Blanc (Gardening)",
                 new Vector3(33.8f, 30.7f, -18f)
-            },
-            {
-                "Blanc [EVENT] (Gardening)",
-                new Vector3(-43.2f, 10.8f, 253.2f)
             },
             {
                 "Baily J (Bird Watching)",
@@ -13235,10 +13227,6 @@ namespace HeartopiaMod
             {
                 "Doris (Meteor Shower)",
                 new Vector3(6f, 22.9f, 199.4f)
-            },
-            {
-                "Azure [Event] (Fashion Wave)",
-                new Vector3(-33.6f, 12.6f, 239.1f)
             }
         };
 
