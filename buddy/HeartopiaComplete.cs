@@ -446,9 +446,8 @@ namespace HeartopiaMod
         private float autoEatStepTimer = 0f;
         private int autoEatScrollAttempts = 0;
         private int autoEatAttempts = 0;
-        // Resource-farm: pause when auto-repair triggered (seconds)
-        private float resourceAutoRepairPauseSeconds = 20f;
-        private float resourceRepairPauseUntil = 0f;
+        // Resource-farm: debounce window for repair triggers (in seconds)
+        private float resourceAutoRepairPauseSeconds = 42f;
         // Timestamp of the last repair trigger to debounce repeated triggers
         private float lastRepairTriggerTime = -999f;
         // Distance to teleport player backward (meters) before starting repair
@@ -634,7 +633,7 @@ namespace HeartopiaMod
             this.areaLoadDelay = data.areaLoadDelay;
             this.resourceTeleportCooldown = data.resourceTeleportCooldown;
             this.resourceClickDuration = data.resourceClickDuration;
-            this.resourceAutoRepairPauseSeconds = data.resourceAutoRepairPauseSeconds;
+            // resourceAutoRepairPauseSeconds is hardcoded to 42f - never load from file
             this.gameSpeed = data.gameSpeed;
             this.customCameraFOVEnabled = data.customCameraFOVEnabled;
             this.cameraFOV = data.cameraFOV;
@@ -840,7 +839,7 @@ namespace HeartopiaMod
                         else if (line.Contains("areaLoadDelay")) this.areaLoadDelay = GetJsonInt(line, "\"areaLoadDelay\":");
                         else if (line.Contains("resourceTeleportCooldown")) this.resourceTeleportCooldown = GetJsonFloat(line, "\"resourceTeleportCooldown\":");
                         else if (line.Contains("resourceClickDuration")) this.resourceClickDuration = GetJsonFloat(line, "\"resourceClickDuration\":");
-                        else if (line.Contains("resourceAutoRepairPauseSeconds")) this.resourceAutoRepairPauseSeconds = GetJsonFloat(line, "\"resourceAutoRepairPauseSeconds\":");
+                        // resourceAutoRepairPauseSeconds is hardcoded to 42f - never load from file
                         else if (line.Contains("gameSpeed")) this.gameSpeed = GetJsonFloat(line, "\"gameSpeed\":");
                         else if (line.Contains("customCameraFOVEnabled")) this.customCameraFOVEnabled = GetJsonInt(line, "\"customCameraFOVEnabled\":") != 0;
                         else if (line.Contains("cameraFOV")) this.cameraFOV = GetJsonFloat(line, "\"cameraFOV\":");
@@ -1296,6 +1295,10 @@ namespace HeartopiaMod
                 }
             }
             catch { }
+
+            // Set game speed to 1x on mod load, overriding any remembered speed
+            this.gameSpeed = 1f;
+            Time.timeScale = 1f;
         }
 
         // Token: 0x06000004 RID: 4 RVA: 0x00002390 File Offset: 0x00000590
@@ -1727,9 +1730,8 @@ namespace HeartopiaMod
                             // to run the multi-use auto logic
                             this.lastStartWasAutoRepair = true;
                             this.StartRepair();
-                            // Pause resource farm teleports for configured seconds
-                            this.resourceRepairPauseUntil = Time.time + this.resourceAutoRepairPauseSeconds;
-                            this.AddMenuNotification($"Auto Repair triggered by durability notification — pausing farm for {this.resourceAutoRepairPauseSeconds:F0}s", new Color(0.45f, 1f, 0.55f));
+                            // Farm will auto-pause while repair is running (checked via IsResourceRepairPaused)
+                            this.AddMenuNotification($"Auto Repair triggered by durability notification", new Color(0.45f, 1f, 0.55f));
                     }
                 }
                 if (CheckForEnergyNotification())
@@ -2463,7 +2465,7 @@ namespace HeartopiaMod
 
         public bool IsResourceRepairPaused()
         {
-            return Time.time < this.resourceRepairPauseUntil;
+            return this.isRepairing;
         }
 
         // Public wrappers to allow other modules to trigger repair/eat flows
@@ -3561,13 +3563,6 @@ namespace HeartopiaMod
             this.resourceClickDuration = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 20f), this.resourceClickDuration, 0.1f, 5f);
             if (Math.Abs(this.resourceClickDuration - prevResourceClick) > 0.0001f) { try { this.SaveKeybinds(false); } catch { } }
             num += 30;
-            // Auto Repair pause slider: how long to pause teleports after a repair toast
-            GUI.Label(new Rect(20f, (float)num, 260f, 20f), $"Auto-Repair Tool (Paused TP FARM): {this.resourceAutoRepairPauseSeconds:F0}s");
-            num += 22;
-            float prevResourcePause = this.resourceAutoRepairPauseSeconds;
-            this.resourceAutoRepairPauseSeconds = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 20f), this.resourceAutoRepairPauseSeconds, 0f, 60f);
-            if (Math.Abs(this.resourceAutoRepairPauseSeconds - prevResourcePause) > 0.0001f) { try { this.SaveKeybinds(false); } catch { } }
-            num += 30;
 
             
 
@@ -3617,31 +3612,51 @@ namespace HeartopiaMod
             GUI.enabled = true;
             num += 30;
 
-            // Single enable button
-            string buttonText = isAutoFishingEnabled ? "Disable Auto Fishing" : "Enable Auto Fishing";
-            if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), buttonText))
+            // Mode-specific enable/disable buttons (only show one at a time)
+            if (this.autoFishTeleportEnabled)
             {
-                if (isAutoFishingEnabled)
+                // Teleport fishing mode
+                bool farmEnabled = this.autoFishFarm != null && this.autoFishFarm.farmEnabled;
+                string buttonText = farmEnabled ? "Disable Teleport Fishing" : "Enable Teleport Fishing";
+                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), buttonText))
                 {
-                    // Disable both
-                    if (this.autoFishLogic != null) this.autoFishLogic.ToggleAutoFish();
-                    if (this.autoFishFarm != null) this.autoFishFarm.ToggleFarm();
-                    this.showFishShadowRadar = false;
-                }
-                else
-                {
-                    // Enable based on teleport setting
-                    if (this.autoFishTeleportEnabled)
+                    if (farmEnabled)
                     {
+                        // Disable farm
                         if (this.autoFishFarm != null) this.autoFishFarm.ToggleFarm();
+                        this.showFishShadowRadar = false;
                     }
                     else
                     {
-                        if (this.autoFishLogic != null) this.autoFishLogic.ToggleAutoFish();
+                        // Enable farm
+                        if (this.autoFishFarm != null) this.autoFishFarm.ToggleFarm();
+                        this.showFishShadowRadar = true;
+                        this.isRadarActive = true;
+                        this.RunRadar();
                     }
-                    this.showFishShadowRadar = true;
-                    this.isRadarActive = true;
-                    this.RunRadar();
+                }
+            }
+            else
+            {
+                // Standard fishing mode
+                bool logicEnabled = this.autoFishLogic != null && this.autoFishLogic.autoFishEnabled;
+                string buttonText = logicEnabled ? "Disable Auto Fishing" : "Enable Auto Fishing";
+                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 260f, 35f), buttonText))
+                {
+                    if (logicEnabled)
+                    {
+                        // Disable fishing
+                        if (this.autoFishLogic != null) this.autoFishLogic.ToggleAutoFish();
+                        this.showFishShadowRadar = false;
+                    }
+                    else
+                    {
+                        // Enable fishing
+                        if (this.autoFishLogic != null) this.autoFishLogic.ToggleAutoFish();
+                        this.showFishShadowRadar = true;
+                        this.isRadarActive = true;
+                        this.RunRadar();
+                    }
                 }
             }
             num += 45;
@@ -3694,7 +3709,7 @@ namespace HeartopiaMod
                     if (Math.Abs(this.autoFishFarm.teleportDelay - prevFishTp) > 0.001f) { try { this.SaveKeybinds(false); } catch { } }
                     num += 28;
                 }
-                else if (!this.autoFishTeleportEnabled && this.autoFishLogic != null)
+                if (this.autoFishLogic != null)
                 {
                     // Settings for standing fishing
                     GUI.Label(new Rect(20f, (float)num, 150f, 18f), "Fish Detect Range", small);
@@ -5965,8 +5980,8 @@ namespace HeartopiaMod
             {
                 if (this.resourceMarkerPositions.Count > 0)
                 {
-                    // If paused due to auto-repair, skip starting a teleport until pause expires
-                    if (Time.time < this.resourceRepairPauseUntil)
+                    // If paused due to auto-repair, skip starting a teleport until repair completes
+                    if (this.IsResourceRepairPaused())
                     {
                         return;
                     }
@@ -11625,9 +11640,6 @@ namespace HeartopiaMod
             repairStep = 0;
             scrollAttempts = 0;
             stepTimer = Time.time;
-
-            // Pause resource farm teleports while repairing to avoid overlapping actions
-            this.resourceRepairPauseUntil = Time.time + this.resourceAutoRepairPauseSeconds;
         }
 
         void StopRepair()
@@ -14400,8 +14412,7 @@ namespace HeartopiaMod
                         MelonLogger.Msg("[AutoRepair] Durability toast requested StartRepair (hook)");
                         this.lastStartWasAutoRepair = true;
                         this.StartRepair();
-                        this.resourceRepairPauseUntil = Time.time + this.resourceAutoRepairPauseSeconds;
-                        this.AddMenuNotification($"Auto Repair triggered by durability notification — pausing farm for {this.resourceAutoRepairPauseSeconds:F0}s", new Color(0.45f, 1f, 0.55f));
+                        this.AddMenuNotification($"Auto Repair triggered by durability notification", new Color(0.45f, 1f, 0.55f));
                     }
                     return;
                 }
@@ -14413,9 +14424,7 @@ namespace HeartopiaMod
                     {
                         MelonLogger.Msg("[AutoEat] Energy toast requested StartAutoEat (hook)");
                         this.StartAutoEat();
-                        // Pause farm teleports while auto-eat runs (reuse same pause setting)
-                        this.resourceRepairPauseUntil = Time.time + this.resourceAutoRepairPauseSeconds;
-                        this.AddMenuNotification($"Auto Eat triggered by energy low toast ({this.autoEatFoodOptions[this.autoEatFoodType]}) — pausing farm for {this.resourceAutoRepairPauseSeconds:F0}s", new Color(0.45f, 1f, 0.55f));
+                        this.AddMenuNotification($"Auto Eat triggered by energy low toast ({this.autoEatFoodOptions[this.autoEatFoodType]})", new Color(0.45f, 1f, 0.55f));
                     }
                     return;
                 }
