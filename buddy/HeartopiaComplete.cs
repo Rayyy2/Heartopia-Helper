@@ -440,6 +440,8 @@ namespace HeartopiaMod
         private bool lastStartWasAutoRepair = false;
         private const int MAX_SCROLL_ATTEMPTS = 30;
         private bool isAutoEating = false;
+        private const string GAME_SPEED_LOCKED_DURING_REPAIR_MSG = "Game speed locked during repair. Please wait.";
+
         private int autoEatStep = 0;
         private float autoEatStepTimer = 0f;
         private int autoEatScrollAttempts = 0;
@@ -451,6 +453,8 @@ namespace HeartopiaMod
         private float lastRepairTriggerTime = -999f;
         // Distance to teleport player backward (meters) before starting repair
         private float repairTeleportBackDistance = 2.5f;
+        // Game speed before repair started (to restore after repair completes)
+        private float gameSpeedBeforeRepair = 1f;
         private int maxAutoEatAttempts = 10;
 
         // --- TARGET PATHS FOR PATROL ACTIONS ---
@@ -1538,6 +1542,7 @@ namespace HeartopiaMod
                     if (!this.isRepairing && !this.isAutoEating)
                     {
                         MelonLogger.Msg("[AutoRepair] Hotkey requested StartRepair");
+                        this.lastStartWasAutoRepair = true;
                         this.StartRepair();
                         this.AddMenuNotification("Auto Repair started", new Color(0.45f, 1f, 0.55f));
                     }
@@ -1630,27 +1635,55 @@ namespace HeartopiaMod
                 }
                 if (Input.GetKeyDown(this.keyGameSpeed1x))
                 {
-                    this.gameSpeed = 1f;
-                    Time.timeScale = 1f;
-                    this.AddMenuNotification("Game Speed: 1x", new Color(0.45f, 1f, 0.55f));
+                    if (this.isRepairing)
+                    {
+                        this.AddMenuNotification(GAME_SPEED_LOCKED_DURING_REPAIR_MSG, new Color(1f, 0.8f, 0.2f));
+                    }
+                    else
+                    {
+                        this.gameSpeed = 1f;
+                        Time.timeScale = 1f;
+                        this.AddMenuNotification("Game Speed: 1x", new Color(0.45f, 1f, 0.55f));
+                    }
                 }
                 if (Input.GetKeyDown(this.keyGameSpeed2x))
                 {
-                    this.gameSpeed = 2f;
-                    Time.timeScale = 2f;
-                    this.AddMenuNotification("Game Speed: 2x", new Color(0.45f, 1f, 0.55f));
+                    if (this.isRepairing)
+                    {
+                        this.AddMenuNotification(GAME_SPEED_LOCKED_DURING_REPAIR_MSG, new Color(1f, 0.8f, 0.2f));
+                    }
+                    else
+                    {
+                        this.gameSpeed = 2f;
+                        Time.timeScale = 2f;
+                        this.AddMenuNotification("Game Speed: 2x", new Color(0.45f, 1f, 0.55f));
+                    }
                 }
                 if (Input.GetKeyDown(this.keyGameSpeed5x))
                 {
-                    this.gameSpeed = 5f;
-                    Time.timeScale = 5f;
-                    this.AddMenuNotification("Game Speed: 5x", new Color(0.45f, 1f, 0.55f));
+                    if (this.isRepairing)
+                    {
+                        this.AddMenuNotification(GAME_SPEED_LOCKED_DURING_REPAIR_MSG, new Color(1f, 0.8f, 0.2f));
+                    }
+                    else
+                    {
+                        this.gameSpeed = 5f;
+                        Time.timeScale = 5f;
+                        this.AddMenuNotification("Game Speed: 5x", new Color(0.45f, 1f, 0.55f));
+                    }
                 }
                 if (Input.GetKeyDown(this.keyGameSpeed10x))
                 {
-                    this.gameSpeed = 10f;
-                    Time.timeScale = 10f;
-                    this.AddMenuNotification("Game Speed: 10x", new Color(0.45f, 1f, 0.55f));
+                    if (this.isRepairing)
+                    {
+                        this.AddMenuNotification(GAME_SPEED_LOCKED_DURING_REPAIR_MSG, new Color(1f, 0.8f, 0.2f));
+                    }
+                    else
+                    {
+                        this.gameSpeed = 10f;
+                        Time.timeScale = 10f;
+                        this.AddMenuNotification("Game Speed: 10x", new Color(0.45f, 1f, 0.55f));
+                    }
                 }
                 if (Input.GetKeyDown(this.keyEquipAxe))
                 {
@@ -1741,6 +1774,11 @@ namespace HeartopiaMod
             {
                 HeartopiaComplete.SimulateFKeyUp = false;
                 this.nextSimulatedFKeyUpClearAt = 0f;
+            }
+
+            if (this.isRepairing || this.isAutoRepairRunning)
+            {
+                this.gameSpeed = 1f;
             }
 
             bool flag4 = Math.Abs(Time.timeScale - this.gameSpeed) > 0.05f;
@@ -3729,7 +3767,18 @@ namespace HeartopiaMod
                 num += 22;
                 float prevGameSpeed = this.gameSpeed;
                 this.gameSpeed = this.DrawAccentSlider(new Rect(20f, (float)num, 260f, 20f), this.gameSpeed, 1f, 10f);
-                if (Math.Abs(this.gameSpeed - prevGameSpeed) > 0.0001f) { try { this.SaveKeybinds(false); } catch { } }
+                if (Math.Abs(this.gameSpeed - prevGameSpeed) > 0.0001f) 
+                { 
+                    if (this.isRepairing)
+                    {
+                        this.gameSpeed = prevGameSpeed; // Revert the change
+                        this.AddMenuNotification(GAME_SPEED_LOCKED_DURING_REPAIR_MSG, new Color(1f, 0.8f, 0.2f));
+                    }
+                    else
+                    {
+                        try { this.SaveKeybinds(false); } catch { }
+                    }
+                }
 
                 num += 30;
                 bool prevCustomCameraFOVEnabled = this.customCameraFOVEnabled;
@@ -3812,11 +3861,12 @@ namespace HeartopiaMod
                 num += 35;
 
                 // Action buttons
-                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 120f, 35f), "Auto Repair"))
+                if (this.DrawPrimaryActionButton(new Rect(20f, (float)num, 120f, 35f), "Use Selected Repair"))
                 {
                     if (!this.isRepairing && !this.isAutoEating)
                     {
                         MelonLogger.Msg("[AutoRepair] UI button requested StartRepair");
+                        this.lastStartWasAutoRepair = true;
                         this.StartRepair();
                         this.AddMenuNotification("Auto Repair started", new Color(0.45f, 1f, 0.55f));
                     }
@@ -11566,6 +11616,11 @@ namespace HeartopiaMod
                 repairUsesTarget = 1;
             }
 
+            // Save current game speed and force to 1x during repair
+            this.gameSpeedBeforeRepair = this.gameSpeed;
+            this.gameSpeed = 1f;
+            MelonLogger.Msg($"[StartRepair] starting repair: previous speed={this.gameSpeedBeforeRepair}, forced 1x, isAutoRepairRunning={isAutoRepairRunning}, selected key={autoRepairType}, targetUses={repairUsesTarget}");
+
             isRepairing = true;
             repairStep = 0;
             scrollAttempts = 0;
@@ -11573,6 +11628,15 @@ namespace HeartopiaMod
 
             // Pause resource farm teleports while repairing to avoid overlapping actions
             this.resourceRepairPauseUntil = Time.time + this.resourceAutoRepairPauseSeconds;
+        }
+
+        void StopRepair()
+        {
+            MelonLogger.Msg($"[StopRepair] ending repair: restoring speed={this.gameSpeedBeforeRepair}");
+            this.isRepairing = false;
+            this.isAutoRepairRunning = false;
+            this.repairStep = 0;
+            this.gameSpeed = this.gameSpeedBeforeRepair;
         }
 
         void StartAutoEat()
@@ -11596,7 +11660,7 @@ namespace HeartopiaMod
                     }
                     else
                     {
-                        isRepairing = false;
+                        StopRepair();
                     }
                     break;
 
@@ -11615,7 +11679,7 @@ namespace HeartopiaMod
                     else
                     {
                         CloseInventory();
-                        isRepairing = false;
+                        StopRepair();
                     }
                     break;
 
@@ -11628,47 +11692,47 @@ namespace HeartopiaMod
                     else
                     {
                         CloseInventory();
-                        isRepairing = false;
+                        StopRepair();
                     }
                     break;
 
                 case 3:
                     if (ClickUseButton())
                     {
-                        // Count this use and decide whether to perform another use
-                        autoRepairUseCount++;
+                        // Clicked the use button. Now wait for the kit effect to complete before counting.
                         CloseInventory();
-                        // If this was an auto-repair run and we haven't reached the target, wait then retry
-                        if (isAutoRepairRunning && autoRepairUseCount < repairUsesTarget)
-                        {
-                            autoRepairWaiting = true;
-                            autoRepairWaitTimer = Time.time + autoRepairWaitDuration;
-                            stepTimer = autoRepairWaitTimer;
-                            // set to a waiting state (4) — when timer expires we'll restart from step 0
-                            repairStep = 4;
-                        }
-                        else
-                        {
-                            isRepairing = false;
-                            repairStep = 0;
-                        }
+                        MelonLogger.Msg($"[ExecuteRepairStep] Use button clicked. Waiting for kit effect to complete...");
+                        // Transition to step 4 where we wait for kit to settle, then increment count
+                        repairStep = 4;
+                        stepTimer = Time.time + autoRepairWaitDuration;
                     }
                     else
                     {
                         CloseInventory();
-                        isRepairing = false;
-                        repairStep = 0;
+                        StopRepair();
                     }
                     break;
 
                 case 4:
-                    // Waiting between repeated auto-repair uses
-                    if (autoRepairWaiting && Time.time >= autoRepairWaitTimer)
+                    // Waiting for kit effect to complete. After this timer, we increment the use count.
+                    if (Time.time >= stepTimer)
                     {
-                        autoRepairWaiting = false;
-                        // start the next repair cycle by reopening the inventory
-                        repairStep = 0;
-                        stepTimer = Time.time;
+                        // Now increment the count after the kit has had time to apply
+                        autoRepairUseCount++;
+                        MelonLogger.Msg($"[ExecuteRepairStep] Kit effect complete. count={autoRepairUseCount}, target={repairUsesTarget}");
+                        
+                        // Check if we need more uses
+                        if (autoRepairUseCount < repairUsesTarget)
+                        {
+                            // Need more uses. Immediately restart the cycle—no extra delay needed.
+                            repairStep = 0;
+                            stepTimer = Time.time;
+                        }
+                        else
+                        {
+                            // All uses completed. Stop repair and restore speed.
+                            StopRepair();
+                        }
                     }
                     break;
             }

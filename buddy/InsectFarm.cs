@@ -302,6 +302,34 @@ namespace HeartopiaMod
             }
         }
 
+        // Check if an interact bubble is currently visible (indicates nearby bush or other interactive object)
+        private static bool IsInteractBubbleActive()
+        {
+            try
+            {
+                // All possible interact button paths from HeartopiaComplete
+                string[] interactButtonPaths = new string[] {
+                    "GameApp/startup_root(Clone)/XDUIRoot/Bottom/TrackingPanel(Clone)/tracking_bar@w/tracking_chop@list/IconsBarWidget(Clone)/root_visible@go/cells@t/cells@list/CommonIconForInteract(Clone)/root_visible@go/icon@img@btn",
+                    "GameApp/startup_root(Clone)/XDUIRoot/Bottom/TrackingPanel(Clone)/tracking_bar@w/tracking_mine@list/IconsBarWidget(Clone)/root_visible@go/cells@t/cells@list/CommonIconForInteract(Clone)/root_visible@go/icon@img@btn",
+                    "GameApp/startup_root(Clone)/XDUIRoot/Bottom/TrackingPanel(Clone)/tracking_bar@w/tracking_common@list/IconsBarWidget(Clone)/root_visible@go/cells@t/cells@list/CommonIconForInteract(Clone)/root_visible@go/icon@img@btn",
+                    "GameApp/startup_root(Clone)/XDUIRoot/Bottom/TrackingPanel(Clone)/tracking_bar@w/tracking_harvest@list/IconsBarWidget(Clone)/root_visible@go/cells@t/cells@list/CommonIconForInteract(Clone)/root_visible@go/icon@img@btn"
+                };
+
+                // If ANY interact button is currently visible, we're near an interactive object
+                foreach (string path in interactButtonPaths)
+                {
+                    GameObject btn = GameObject.Find(path);
+                    if (btn != null && btn.activeInHierarchy)
+                    {
+                        return true; // Interact bubble is active
+                    }
+                }
+            }
+            catch { }
+
+            return false; // No interact bubble detected
+        }
+
         private static void TryInteract(HeartopiaComplete host)
         {
             try
@@ -336,6 +364,14 @@ namespace HeartopiaMod
 
         private static void StartSimulateFSequence(HeartopiaComplete host)
         {
+            // Check if there's an active interact bubble (like a bush) that would interfere
+            // If so, skip F-key simulation to avoid getting stuck interacting with the bush
+            if (IsInteractBubbleActive())
+            {
+                MelonLoader.MelonLogger.Msg("[InsectFarm] Skipping F-key simulation: interact bubble detected (likely bush)");
+                return;
+            }
+
             insectSimulating = true;
             insectSimStart = Time.unscaledTime;
             insectSimFrame = 0;
