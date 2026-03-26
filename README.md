@@ -5,6 +5,8 @@ Require's [MelonLoader](https://melonloader.co/download.html) to use.
 
 [Insert] Key to show/Hide the UI.
 
+Auto Cat Playing is still in testing, it doesnt work, pls ignore.
+
 Credits to kaikai2020 from uc forum and other members that shared codes on this thread. 
 "https://www.unknowncheats.me/forum/other-games/736498-heartopia-buddy-teleport-auto-farm.html"
 
