@@ -13201,8 +13201,7 @@ namespace HeartopiaMod
             new Vector3(52.89f, 21.45f, 93.46f),
             new Vector3(88.98f, 22.17f, 58.11f),
             new Vector3(90.69f, 21.95f, 18.20f),
-            new Vector3(86.92f, 22.03f, -38.49f),
-            new Vector3(75f, 20.7f, -73f)
+            new Vector3(86.92f, 22.03f, -38.49f)
         };
 
         private Vector3[] animalCareLocations = new Vector3[]
